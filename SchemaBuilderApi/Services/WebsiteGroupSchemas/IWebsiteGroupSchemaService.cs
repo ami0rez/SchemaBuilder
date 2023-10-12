@@ -7,7 +7,7 @@ namespace SchemaBuilder.Api.Services.WebsiteGroupSchemas
     {
         Task AddWebsiteGroupSchema(WebsiteGroupSchema c);
         Task DeleteWebsiteGroupSchema(WebsiteGroupSchemaFilter filter);
-        Task EditRange(IEnumerable<WebsiteGroupSchema> c);
+        Task UpdateWebsiteGroupsForSchemas(IEnumerable<WebsiteGroupSchema> c);
         Task<int> GetCount(WebsiteGroupSchemaFilter filter);
         Task<List<WebsiteGroupSchema>> GetWebsiteGroupSchemas(WebsiteGroupSchemaFilter filter);
     }

@@ -169,15 +169,60 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                 };
 
                 Schemas.Add(schema1);
+
+                var schema2 = new Schema
+                {
+                    id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa7"),
+                    name = "Address",
+                    parentId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
+                    master = true,
+                    properties = new List<SchemaProperty>
+                    {
+                        new SchemaProperty
+                        {
+                            name = "city",
+                            friendlyName = "City",
+                            datatype = 0,
+                            schemaDataTypeId = 0,
+                            visible = true
+                        },
+                        new SchemaProperty
+                        {
+                            name = "country",
+                            friendlyName = "Country",
+                            datatype = 0,
+                            schemaDataTypeId = 0,
+                            visible = true
+                        },
+                        new SchemaProperty
+                        {
+                            name = "zip",
+                            friendlyName = "Zip Code",
+                            datatype = 0,
+                            schemaDataTypeId = 0,
+                            visible = true
+                        },
+                        new SchemaProperty
+                        {
+                            name = "street",
+                            friendlyName = "Street",
+                            datatype = 0,
+                            schemaDataTypeId = 0,
+                            visible = true
+                        }
+                    }
+                };
+
+                Schemas.Add(schema2);
             }
 
             if (!WebsiteGroupSchemas.Any())
             {
                 var websiteGroupSchema = new WebsiteGroupSchema
                 {
-                    id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
+                    id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa8"),
                     groupName = "Block 1",
-                    schemaId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa0"),
+                    schemaId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
                 };
                 WebsiteGroupSchemas.Add(websiteGroupSchema);
             }

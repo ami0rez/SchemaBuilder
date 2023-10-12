@@ -39,7 +39,7 @@ namespace CategoryBuilderApi.Controllers
         [HttpPut]
         public async Task<ActionResult> Put([FromBody] IEnumerable<WebsiteGroupSchema> b)
         {
-            await _websiteGroupSchemaService.EditRange(b).ConfigureAwait(false);
+            await _websiteGroupSchemaService.UpdateWebsiteGroupsForSchemas(b).ConfigureAwait(false);
             return Ok();
 
         }

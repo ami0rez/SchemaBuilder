@@ -215,7 +215,7 @@
 
             var data = schemas.filter(mySchema => mySchema.id == schemaId);
 
-            if (schemas.length == 1) {
+            if (schemas.length > 1) {
                 var properties = data[0].properties;
                 Properties = properties;
                 for (var i = 0; i < properties.length; i++) {
@@ -233,7 +233,7 @@
         function toggleSchemaToGroup(groupId, schemaID) {
             var myGroups = categoryGroup.filter(x => x.groupName == groupId && x.schemaId == schemaID);
             if (myGroups.length > 0)
-                categoryGroup = categoryGroup.filter(x => !(x.groupName == groupId && x.schemaId == schemaID));
+                categoryGroup = categoryGroup.filter(x => !(x.groupName == groupId && x.schemaId == schemaID)).map(x => ({...x, id: e7()}));
             else {
                 categoryGroup.push({ groupName: groupId, schemaId: schemaID, id: e7() });
             }

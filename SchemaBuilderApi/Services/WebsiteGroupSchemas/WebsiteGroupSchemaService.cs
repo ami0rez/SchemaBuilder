@@ -1,6 +1,7 @@
 ﻿using SchemaBuilder.Infrastruction.Data.Models;
 using SchemaBuilder.Infrastruction.Repositories.WebsiteGroupSchemas;
 using SlickyCommonLibrary.DomainUI;
+using System.Linq;
 
 namespace SchemaBuilder.Api.Services.WebsiteGroupSchemas
 {
@@ -30,9 +31,17 @@ namespace SchemaBuilder.Api.Services.WebsiteGroupSchemas
 
         }
 
-        public async Task EditRange(IEnumerable<WebsiteGroupSchema> c)
+        public async Task UpdateWebsiteGroupsForSchemas(IEnumerable<WebsiteGroupSchema> websiteGroupSchemas)
         {
-            await _websiteGroupSchemaRepository.EditRange(c);
+            var groups = websiteGroupSchemas.GroupBy(schema => schema.groupName);
+            foreach (var group in groups) { 
+                await _websiteGroupSchemaRepository.Delete(new WebsiteGroupSchemaFilter { groupName = group.Key });
+                foreach (var item in group)
+                {
+                    await _websiteGroupSchemaRepository.Add(item);
+                }
+            }   
+
         }
 
         public async Task DeleteWebsiteGroupSchema(WebsiteGroupSchemaFilter filter)
