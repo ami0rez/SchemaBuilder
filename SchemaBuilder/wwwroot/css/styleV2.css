@@ -1,0 +1,287 @@
+﻿/*
+    GOOGLE FONTS
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@300;700&display=swap');
+
+/*
+    FONTS
+*/
+@font-face {
+    font-family: "PlusJakartaDisplay-BoldItalic";
+    src: url("fonts/PlusJakartaDisplay-BoldItalic.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaDisplay-Light";
+    src: url("fonts/PlusJakartaDisplay-Light.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaDisplay-LightItalic";
+    src: url("fonts/PlusJakartaDisplay-LightItalic.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaDisplay-Medium";
+    src: url("fonts/PlusJakartaDisplay-Medium.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaDisplay-MediumItalic";
+    src: url("fonts/PlusJakartaDisplay-MediumItalic.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaDisplay-Regular";
+    src: url("fonts/PlusJakartaDisplay-Regular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaText-Bold";
+    src: url("fonts/PlusJakartaText-Bold.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaText-BoldItalic";
+    src: url("fonts/PlusJakartaText-BoldItalic.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaText-Italic";
+    src: url("fonts/PlusJakartaText-Italic.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaText-Light";
+    src: url("fonts/PlusJakartaText-Light.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaText-LightItalic";
+    src: url("fonts/PlusJakartaText-LightItalic.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "PlusJakartaText-Regular";
+    src: url("fonts/PlusJakartaText-Regular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "Inter-Bold";
+    src: url("fonts/Inter-Bold.ttf") format('truetype');
+}
+
+@font-face {
+    font-family: "Inter-Medium";
+    src: url("fonts/Inter-Medium.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Inter-Regular";
+    src: url("fonts/Inter-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Inter-SemiBold";
+    src: url("fonts/Inter-SemiBold.ttf") format("truetype");
+}
+
+/* END FONTS */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Hind Vadodara';
+    font-weight: 700;
+    font-style: normal;
+    letter-spacing: -0.01em;
+}
+
+h1 {
+    font-size: 64px;
+    line-height: 110%;
+}
+
+h2 {
+    font-size: 40px;
+    line-height: 140%;
+}
+
+h3 {
+    font-size: 32px;
+    line-height: 125%;
+}
+
+h4 {
+    font-size: 24px;
+    line-height: 150%;
+}
+
+/*
+    BUTTONS
+*/
+
+.btn-primary {
+    background: #3EB7ED !important;
+    border-color: #3EB7ED !important;
+}
+
+    .btn-primary:hover {
+        background: #79d0f7 !important;
+        border-color: #79d0f7 !important;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+.ant-btn {
+    border-radius: 7px;
+    height: 58px;
+    margin-top: 10px;
+    border-style: solid;
+    font-size: 16px;
+    line-height: 24px;
+    justify-content: center;
+    align-items: center;
+}
+
+.ant-btn-lg {
+   width: 100%;
+}
+
+.ant-btn-sm {
+    padding: 10px;
+    height: 50px;
+}
+
+.btn-gray {
+    background: #E4E7EB !important;
+    border-color: #E4E7EB;
+}
+
+.btn-light-gray {
+    background: #FCFCFC !important;
+    border-color: #E4E7EB;
+}
+
+    .btn-light-gray:hover {
+        border-color: #1F2933;
+        box-shadow: 0px 0px 0px 4px rgb(31 41 51 / 20%);
+    }
+.btn-white {
+    color: rgba(0, 0, 0, 0.54);
+    background: #FFFFFF;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
+    border: none;
+}
+
+    .btn-white:hover {
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+/*
+    END BUTTONS
+*/
+
+.border-gray {
+    border: 2px solid #E4E7EB;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+body {
+    background: #E5E5E5;
+}
+
+p, input, button, select, textarea, .form-control, .form-label, span {
+    font-family: 'Inter-Regular';
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+}
+
+p {
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.input-text {
+    font-size: 18px;
+    line-height: 20px;
+    align-items: center;
+    width: 100%;
+    height: 70px;
+}
+
+.form-group .form-control:focus {
+    border: 2px solid #0077FF;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 0px 4px rgba(0, 119, 255, 0.2);
+}
+
+.text-underline {
+    text-decoration-line: underline;
+}
+
+.text-blue {
+    color: #0077FF;
+    cursor: pointer;
+}
+
+
+.pwd-swicher {
+    position: absolute;
+    top: 52px;
+    right: 27px;
+}
+
+@media (max-width: 991px) {
+    .only-desktop {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .input-text, .ant-btn {
+        width: 100%;
+    }
+}
+
+.table-responsive {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+    .table-responsive::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+    }
+
+@media (min-width: 767px) {
+    .rotative-hand {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .rotative-hand {
+        animation: rotate 4s infinite;
+        margin: auto 0 15px auto;
+        position: absolute;
+        bottom: 0;
+        left: 10px;
+        flex-shrink: 0;
+        display: block;
+    }
+
+   @keyframes rotate {
+        0% {
+            transform: rotate(0deg)
+        }
+
+        50% {
+            transform: rotate(45deg)
+        }
+
+        100% {
+            transform: rotate(-45deg)
+        }
+    }
+}

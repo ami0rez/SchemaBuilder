@@ -1,0 +1,74 @@
+﻿@using SlickyCommonLibrary.DomainUI;
+<div class="app-header ant-layout-header">
+    <div class="app-header-inner bg-white">
+        <div class="header-left" style="padding-left:15px;">
+            <div class="list-unstyled list-inline" style="display: flex;">
+
+                <a href="#" class="list-inline-item d-none" id="menu-fold" onclick="toggleMenu(this); return false;">
+                    <i class="anticon anticon-menu-fold list-icon"></i>
+                </a>
+                <a href="javascript:;" class="list-inline-item d-md-none" id="menu-unfold" onclick="toggleMenu(this); return false;">
+                    <i class="anticon anticon-menu-unfold list-icon"></i>
+                </a>
+            </div>
+        </div>
+        <div class="header-right">
+            <ul class="list-unstyled list-inline" style="display: flex;">
+                <li class="list-inline-item search-box seach-box-right d-none d-lg-inline-block">
+                    <div class="search-box-inner">
+                        <div class="search-box-icon">
+                            <i class="anticon anticon-search"></i>
+                        </div>
+                        <input type="text" placeholder="search..."><span class="input-bar"></span>
+                    </div>
+                </li>
+                <li class="list-inline-item dropdown">
+                    <a href="javascript:;" class="dropdown-toggle " id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="NotificationClicked(); return false;">
+                        <span class="ant-badge">
+                            <i class="anticon anticon-bell list-notification-icon"></i>
+                            <sup data-show="true" aria-disabled="false" aria-selected="true" id="notificationNumberCircle" class=" ant-tabs-tab-active ant-tabs-tab ant-scroll-number ant-badge-count ant-badge-multiple-words " title="11">
+                                <span class="ant-scroll-number-only  ">
+                                    <p class="notificationNumber" style=" font-size: 10px; line-height: 14px;"></p>
+                                </span>
+                            </sup>
+
+                        </span>
+                    </a>
+
+                    <div class="dropdown-menu animation-expand ant-tabs-content ant-tabs-content-no-animated animation-expand " aria-labelledby="dropdownMenuButton" style="overflow-y:scroll; height:300px; width: 300px;">
+                        <div role="tabpanel" aria-hidden="false" class="ant-tabs-tabpane ant-tabs-tabpane-active">
+                            <div class="ant-list ant-list-split ant-list-something-after-last-item">
+                                <div class="ant-list-header">
+                                    <a href="javascript:;" class="no-link-style bold" style="padding-left:10px;"><span><i class="anticon anticon-notification"></i></span> Notifications </a>
+                                </div>
+                                <div class="ant-spin-nested-loading">
+
+                                    <div class="ant-spin-container" id="shownotifications" style="word-wrap:break-word;">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="list-inline-item ">
+                    <a class="no-link-style dropdown-toggle " id="avatarMenuButton" data-toggle="dropdown">
+                        <span class="ant-avatar ant-avatar-sm ant-avatar-circle ant-avatar-image">
+                            <img id="header_pic" alt="Avatar Pic" />
+                        </span>
+                        <span class="avatar-text">
+                            <span id="header_screenName"></span>
+                            <small id="header_roleName"></small>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu animation-dock" aria-labelledby="dropdownMenuButton">
+                        <li class="dropdown-item" style="height: unset; line-height: unset !important; cursor: pointer;"><a href="#" onclick="startProductTour()">Help</a></li>
+                        <li id="myProfileMenuItem" class="dropdown-item" style="height:unset;line-height:unset !important;cursor:pointer;" onclick='document.location.href="/home/profile"'>My profile</li>
+                        <li id="logoutMenuItem" class="dropdown-item" style="height:unset;line-height:unset !important;cursor:pointer;" onclick='document.location.href="/home/logout"'><i class="fa fa-fw fa-power-off text-danger"></i> Logout</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

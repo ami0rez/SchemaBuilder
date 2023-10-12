@@ -1,0 +1,264 @@
+﻿@page
+@using SlickyCommonLibrary.Enums;
+@model SchemaBuilder.Pages.Schema.GroupBuilderModel
+@{
+    ViewBag.title = "title";
+}
+
+
+<section class="container-fluid container-mw-xxl chapter">
+    <div class="section-header">
+        <ol class="breadcrumb">
+            <li>Slicky Blocks </li>
+            <li class="">Page Block</li>
+        </ol>
+    </div>
+
+    <div class="section-body contain-lg">
+
+        <div class="form" role="form">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="box box-default users_read">
+                        <div class="box-header style-standard">
+                            Select Category
+                        </div>
+                        <div class="box-body style-default-bright form">
+                            <select class="form-control rounded-right" placeholder="Select" id="categoryId" name="categoryId" onchange="updateSelectedCategories();"></select>
+                        </div>
+                    </div>
+                    <div class="box box-default users_read">
+                        <div class="box-header style-standard">
+                            Groups
+                        </div>
+                        <div class="box-body style-default-bright form">
+                            <div class="row">
+                                <div class="col-7" id="categorySections">
+                                </div>
+                                <div class="col-5">
+                                    <div id="mySchemas"></div>
+                                </div>
+                                <div class="col-4"></div>
+                                <div class="col-7">
+                                    <a class="btn btn-md u-btn-primary g-font-weight-600 g-font-size-12 text-uppercase slickyButton g-mt-20 g-mb-20" href="javascript:;" onclick="saveGroupSchemas(); return false;">
+                                        Save Selection
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+</section>
+
+
+<div class="modal fade" id="propertyModal" role="dialog">
+    <div class="modal-dialog   modal-lg" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom:0px;cursor:pointer">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 ">
+                        <h4>Select Visible Properties</h4>
+                    </div>
+                    <div class="col-md-12 ">
+                        <div class="row" id="mySchemaProperty">
+                        </div>
+
+                    </div>
+                    <div class="col-md-12 ">
+                        <a class="btn btn-md u-btn-primary g-font-weight-600 g-font-size-12 text-uppercase slickyButton g-mt-20 g-mb-20" href="javascript:;" onclick="saveProperties(); return false;">
+                            Save Visibility
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+    {
+    <script src="~/js/libs/jquery-ui/jquery-ui.min.js"></script>
+}
+@section DemoScripts
+    {
+    <script>
+
+
+        var SCHEMATYPES = [
+            @foreach (var type in Enum.GetValues(typeof(Datatype)))
+            {
+                @: '@Enum.GetName(typeof(Datatype), type)',
+            }
+        ];
+
+        var categories = [];
+        var sections = [];
+        var websiteGroupSchema = [];
+        var categoryGroup = [];
+        var schemas = [];
+        var masterSchemas = [];
+        var Properties = [];
+
+
+        (async () => {
+            $('#categoryId').val('@ViewBag.categoryId');
+            var myPromise = getPromiseData("Category");
+            await loadPromise(myPromise, "categories");
+            addCategoriesToDropdown();
+
+            var myWebsiteSectionPromise = getPromiseData("WebsiteSection");
+            await loadPromise(myWebsiteSectionPromise, "sections");
+
+            var mySchemaPromise = getPromiseData("Schema", "showLevel1Properties=true");
+            await loadPromise(mySchemaPromise, "schemas");
+
+            filterSchemas();
+
+            var myWebsiteGroupSchemaPromise = getPromiseData("WebsiteGroupSchema");
+            await loadPromise(myWebsiteGroupSchemaPromise, "websiteGroupSchema");
+
+            showCategorySections(categories[0].id)
+        })();
+        
+
+        function filterSchemas() {
+            masterSchemas = schemas.filter(mySchema => mySchema.master)
+        }
+
+
+        function addCategoriesToDropdown() {
+            categories.forEach(category => {
+                $(`#categoryId`).append(`<option value='${category.id}'>${category.name}</option>`);
+            })
+        }
+
+        function updateSelectedCategories() {
+            showCategorySections($('#categoryId').val())
+        }
+
+
+        function showCategorySections(categoryId) {
+            const categorySections = sections.filter(section => section.categoryID === categoryId);
+            const groupedSections = categorySections.reduce((groups, section) => {
+                const key = section.groupName;
+
+                if (!groups[key]) {
+                    groups[key] = [];
+                }
+
+                groups[key].push(section);
+                return groups;
+            }, {});
+            const orderedGroups = Object.keys(groupedSections).sort();
+
+            $(`#categorySections`).html('');
+            orderedGroups.forEach(group => {
+                var groupOptionTemplate = `
+                        <div>
+                            <input type="radio" name="myGroup" value="${group}" style="width:50px" onclick="showMasterSchemas('${group}')" />  Group ${group}
+                            <text>
+                                <small>
+                                    OPTIONS_GROUPED_SECTIONS
+                                </small>
+                                    <br>
+                            </text>
+                        </div>
+                     `;
+
+                var optionsGroupedSection = '';
+                groupedSections[group].forEach(mySection => {
+                    optionsGroupedSection += (optionsGroupedSection ? ' ,' : '') + mySection.name
+                })
+
+                groupOptionTemplate = groupOptionTemplate.replace('OPTIONS_GROUPED_SECTIONS', optionsGroupedSection);
+                $(`#categorySections`).append(groupOptionTemplate);
+            })
+
+
+
+        }
+
+        function ShowSchemas(groupId) {
+            $('#mySchemas').html('')
+        }
+
+        function showMasterSchemas(groupId) {
+            $('#mySchemas').html('');
+            for (var i = 0; i < masterSchemas.length; i++) {
+                $('#mySchemas').append(`<div ><input type="checkbox" id="val_` + masterSchemas[i].id + `" value="` + masterSchemas[i].id + `"  style="width:50px" onClick="toggleSchemaToGroup('` + groupId + `','` + masterSchemas[i].id + `');"> <a href='#' onClick="showProperties('` + masterSchemas[i].id + `');return false;">` + masterSchemas[i].name + `</a></div>`);
+            }
+            var groupSchemas = websiteGroupSchema.filter(gSchema => gSchema.groupName == groupId);
+            for (var i = 0; i < groupSchemas.length; i++) {
+                categoryGroup.push(groupSchemas[i]);
+                $("#val_" + groupSchemas[i].schemaId).prop("checked", true);
+            }
+        }
+
+        function showProperties(schemaId) {
+            $('#mySchemaProperty').html('');
+            $('#propertyModal').modal('show');
+
+            var data = schemas.filter(mySchema => mySchema.id == schemaId);
+
+            if (schemas.length == 1) {
+                var properties = data[0].properties;
+                Properties = properties;
+                for (var i = 0; i < properties.length; i++) {
+                    var isChecked = properties[i].visible ? "checked" : "";
+                    var isBold = SCHEMATYPES[properties[i].datatype] == "_schema" ? " style='font-weight:800;padding-bottom:10px;'" : "style='padding-bottom:10px;'";
+                    var showDetails = SCHEMATYPES[properties[i].datatype] == "_schema" ? "style='display:none;'" : "";
+                    var myDiv = `<div class='col-4' ` + isBold + `><input type="checkbox" id="prop_` + properties[i].id + `" ` + isChecked + ` value="` + properties[i].id + `"  style="width:50px" onClick="toggleProperty(` + properties[i].id + `,$(this).prop('checked'));" > ` + properties[i].name + `</div><div class='col-3'><span ` + showDetails + `>  [ ` + SCHEMATYPES[properties[i].datatype] + ` ] </span></div>`;
+                    myDiv += `<div class='col-5'> <input type=text id=id="friend_` + properties[i].id + `" value="` + (properties[i].friendlyName ?? '') + `" style="width:200px;" onChange="updatePropertyFriendlyName(` + properties[i].id + `,$(this).val());">  </div>`;
+                    $('#mySchemaProperty').append(myDiv);
+                }
+            }
+        }
+
+
+        function toggleSchemaToGroup(groupId, schemaID) {
+            var myGroups = categoryGroup.filter(x => x.groupName == groupId && x.schemaId == schemaID);
+            if (myGroups.length > 0)
+                categoryGroup = categoryGroup.filter(x => !(x.groupName == groupId && x.schemaId == schemaID));
+            else {
+                categoryGroup.push({ groupName: groupId, schemaId: schemaID, id: e7() });
+            }
+        }
+
+        function toggleProperty(id, isChecked) {
+            var myProp = Properties.find(x => x.id == id);
+            myProp.visible = isChecked;
+        }
+
+
+        function updatePropertyFriendlyName(id, value) {
+            var myProp = Properties.find(x => x.id == id);
+            myProp.friendlyName = value;
+        }
+
+        function saveProperties() {
+            ajaxCall("PUT", Properties, "SchemaProperty", "Properies Saved", () => {
+                $('#propertyModal').modal('hide');
+            });
+        }
+
+        function saveGroupSchemas() {
+            ajaxCall("PUT", categoryGroup, "WebsiteGroupSchema", "Groups Saved");
+        }
+
+    </script>
+}

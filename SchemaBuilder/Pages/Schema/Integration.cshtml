@@ -1,0 +1,304 @@
+﻿@page
+@using SlickyCommonLibrary.Enums;
+@model SchemaBuilder.Pages.Schema.IntegrationModel
+@{
+    ViewBag.title = "title";
+}
+
+<section class="container">
+
+    <div class="section-body contain-lg">
+        Select Category:
+        <div class="margin-bottom-20">
+            <select class="form-control rounded-right" placeholder="Select" id="productId" name="productId" onchange="loadFieldsFor($(this).val())">
+                @*@if (Model.Any())
+                {
+                    <option></option>
+                    foreach (var s in Model)
+                    {
+                        @: <option value="@s.id"> @s.name </option>
+                    }
+                }*@
+            </select>
+        </div>
+    </div>
+    <div class="section-body contain-lg">
+        <h2 id="SchemaTitle"></h2>
+        <div id="SchemaProperties"></div>
+
+        <div id="SavePropertiesToCoookie">
+            <a class="btn btn-md u-btn-primary g-font-weight-600 g-font-size-12 text-uppercase slickyButton g-mt-20 g-mb-20" href="javascript:;" onclick="saveClientSchemas(); return false;">
+                Save Client Info
+            </a>
+
+        </div>
+
+
+        <div id="FullSchemaProperties"></div>
+    </div>
+
+</section>
+
+
+@section scripts
+    {
+    <script src="~/js/libs/jquery-ui/jquery-ui.min.js"></script>
+}
+
+
+<script>
+
+    //$(function () {
+
+    //    $('#SavePropertiesToCoookie').hide();
+    //})
+    var schemas = [];
+    var schemasSaved = [];
+    function loadFieldsFor(categoryId) {
+        schemas = [];
+        schemasSaved = [];
+        ajaxCall("GET", null, "WebsiteSection?categoryId=" + categoryId ,null,null,processGroups);
+    }
+    var myLenght = 0;
+    var myLenghtCount = 0;
+    function processGroups(data) {
+
+        if (data.length > 0) {
+            myLenght = data.length;
+            for (var i = 0; i < data.length; i++) {
+
+                ajaxCall("GET", null, "WebsiteGroupSchema?groupName=" + data[i].groupName, null, null, filterGroups);
+            }
+
+
+        }
+    }
+
+
+
+    function filterGroups(data) {
+        myLenghtCount++;
+        if (data.length > 0) {
+            for (var i = 0; i < data.length; i++) {
+                if (!schemas.find(x => x == data[i].schemaId))
+                    schemas.push(data[i].schemaId);
+            }
+        }
+        schemas.sort((a, b) => (a > b) ? 1 : -1);
+        if (myLenghtCount == myLenght) {
+            processDataEntry();
+        }
+
+    }
+
+    function processDataEntry() {
+
+
+        schemas.every(el => {
+
+            if (schemasSaved.find(x => x == el)==null) {
+                schemasSaved.push(el);
+                return false;
+            }
+        }
+        );
+        displaySchemaFields(schemasSaved[schemasSaved.length-1]);
+    }
+
+    function displaySchemaFields(schemaId) {
+        $('#SchemaProperties').html('');
+        ajaxCall("GET", null, "ISchema?id=" + schemaId, null, null, displayProperties);
+
+        $('#SavePropertiesToCoookie').show();
+    }
+    var depth = 0;
+
+    var fieldsNames = [];
+    var masterType = {};
+    function displayProperties(data, parentList) {
+
+        var friendlyName = "";
+        var spacing = (50 * depth) + "px";
+       
+        var model = {};
+        var showButtonText = '';
+        var properties = [];
+        if (Array.isArray(data)) {
+            model = data[0];
+            parentList = model.name;
+            masterType = model;
+            friendlyName = model.name;
+            properties = model.properties;
+        }
+        else {
+            model = data;
+            friendlyName = model.friendlyName ?? model.name;
+            if (model.schemaDataType == null) {
+                console.log("--> It looks like we have a problem with this model name:" + friendlyName + ", model id: " + model.id);
+                return;
+            }
+            showButtonText='<i class="fas fa-plus-circle" aria-hidden="true"></i>';
+            properties = model.schemaDataType.properties;
+        }
+
+        $('#SchemaProperties').append(`<div style="padding-top:10px;padding-left:` + spacing + `"><h3><a href="#" onClick="toggleClass('` + parentList +`');return false;">` + friendlyName + ` ` + showButtonText + ` </h3></div>`);
+
+
+
+        properties.forEach(element => {
+            if (element.visible)
+                if (element.datatype != 4) {
+                    fieldsNames.push(parentList + '_' + element.name + '_1');
+                    $('#SchemaProperties').append('<div class="' + parentList + '" style="padding-top:10px;padding-left:' + spacing + '">' + (element.friendlyName ?? element.name) + ': <input type="text" id="' + parentList + '_' + element.name + '_1' + '"  ></div>');
+                }
+        });
+
+        properties.forEach(element => {
+            if (element.visible) {
+                if (element.datatype == 4) {
+                    depth++;
+                    displayProperties(element, (parentList == null ? '' : parentList + '_') + element.name);
+                    depth--;
+                }
+            }
+                       //$('#SchemaProperties').append('<h4>' + (element.friendlyName ?? element.name) + '</h4>');
+                        //<div style="padding-top:10px;">' + (element.friendlyName ?? element.name) + ': <input type="text" id="' + element.name + '"  ></div>');
+        });
+        $('#SchemaProperties').append('</div>');
+        $('.' + parentList).hide();
+    }
+
+    function toggleClass(className) {
+        if ($('.' + className).css('display')== 'none')
+            $('.' + className).show();
+        else
+            $('.' + className).hide();
+    }
+
+    var mySavedCookie = [];
+
+    function saveClientSchemas() {
+        mySavedCookie = [];
+        fieldsNames.forEach(x => {
+            var xvalue = $('#' + x).val();
+            if (xvalue != null && xvalue.length > 0) {
+                var myCookie = { id: x, value: xvalue };
+                mySavedCookie.push(myCookie);
+            }
+        });
+
+        showSchemasWithData()
+    }
+
+
+    function showSchemasWithData() {
+
+        var fullschemas = printJSONProperties(masterType, masterType.name);
+
+        var fullSchemaDiv = `
+                             <div class="section-body contain-lg clients_read">
+
+                                        <div class="box box-default users_read">
+                                            <div class="box-header style-standard">
+                                                JSON-LD View
+                                            </div>
+                                            <div class="box-body style-default-bright form">
+                                                <pre class="  prettyprint  ">
+                                                <ol class="linenums">
+
+                                                <li><span class="tagc">&lt;script</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"application/ld+json"</span><span class="tagc">&gt;</span><span class="pln"></span></li>
+                                                <li><span class="pln"></span><span class="pun">{</span><span class="pln"></span></li>
+                                                <li><span class="pln">&nbsp; </span><span class="str">"@@context"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"https://schema.org"</span><span class="pun">,</span><span class="pln"></span></li>
+                                           ` + fullschemas + `
+                                                <li><span class="pln"></span><span class="pun">}</span><span class="pln"></span></li>
+                                                <li><span class="pln"></span><span class="tagc">&lt;/script&gt;</span></li>
+                                                </ol></pre>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                            `;
+
+
+        $('#FullSchemaProperties').html(fullSchemaDiv)
+    }
+
+
+    function spaces(count)
+    {
+        var line = "&nbsp; ";
+        for (var i = 0; i < count; i++) {
+            line += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
+        }
+        return line;
+    }
+
+
+
+    function printJSONProperties(xschema, parentList)
+    {
+        if (xschema == null)
+            return "";
+
+        var line = "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"@@type\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + xschema.name + "\"</span><span class='pun'>,</span><span class='pln'></span></li>";
+
+
+        if (xschema.properties != null && xschema.properties.length > 0)
+        {
+            xschema.properties.forEach(p => {
+                if (p.visible) {
+                    if (p.datatype == 4) {
+
+                        line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='pun'>{</span><span class='pln'></span></li>";
+                        depth += 1;
+                        line += printJSONProperties(p.schemaDataType, (parentList == null ? '' : parentList + '_') + p.name) + "<li class='L8'><span class='pln'>" + spaces(depth) + " </span>";
+                        var comma = ",";
+                        if (p == xschema.properties.findLast(x => x != null && x.visible == true)) {
+                            comma = "";
+                        }
+                        line += "<span class='pun'>}" + comma + "</span><span class='pln'></span></li>";
+                        depth -= 1;
+                    }
+                    else {
+                        var comma = ",";
+                        var savedCookie = mySavedCookie.find(x => x.id == parentList + '_' + p.name + '_1')
+                        var value = savedCookie == null ? "-No Data-" : savedCookie.value ;
+
+                        if (p == xschema.properties.findLast(x => x != null && x.visible==true)) {
+                            comma = "";
+                        }
+                        if (p.datatype == 0) {
+                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + value + "\"</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
+                        }
+                        if (p.datatype == 1) //Datatype._bool)
+                        {
+                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>" + value + "</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
+                        }
+                        if (p.datatype == 3) //Datatype._date)
+                        {
+                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + value + "\"</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
+
+                        }
+                        if (p.datatype == 2) //Datatype._number)
+                        {
+                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>" + value + "</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
+                        }
+                    }
+                }
+            }
+
+            );
+        }
+        else
+        {
+            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='atn'>\"MISSING PROPERTIES\"</span></li>";
+        }
+
+
+        return line;
+
+    }
+
+
+</script>

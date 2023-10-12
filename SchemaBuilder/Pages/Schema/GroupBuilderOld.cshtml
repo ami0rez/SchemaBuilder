@@ -1,0 +1,212 @@
+﻿@using WebClient.Models
+@using Models
+@model SchemaGroupBuilder
+
+
+
+<section class="container">
+
+    <div class="section-body contain-lg clients_read">
+        Select Category
+        <div class="margin-bottom-20">
+            <select class="form-control rounded-right" placeholder="Select" id="categoryId" name="categoryId" onchange="window.location= '/?&pageName=schemaGroup&categoryId=' + $(this).val()">
+                @if (Model.categories.Any())
+                {
+                    foreach (var s in Model.categories.OrderBy(x=>x.name))
+                    {
+                        @: <option value="@s.id"> @s.name </option>
+                    }
+                }
+            </select>
+        </div>
+        </div>
+
+    </div>
+
+    <div class="section-body contain-lg clients_read">
+
+        <div class="box box-default users_read">
+            <div class="box-header style-standard">
+              Groups
+            </div>
+            <div class="box-body style-default-bright form">
+
+                <div class="row">
+                    <div class="col-4">
+                        @if (Model.sections != null)
+                        {
+                            foreach (var s in Model.sections.GroupBy(x => x.groupName).OrderBy(x => x.Key))
+                            {
+                                if (!string.IsNullOrEmpty(s.Key))
+                                {
+                                    @: <input type="radio" name="myGroup" value="@s.Key" style="width:50px" onclick="getMasterSchemas('@s.Key')" />  Group @s.Key
+                                    <text>
+                                        <small>
+                                            (
+                                            @foreach (var mySection in Model.sections.Where(x => x.groupName == s.Key))
+                                            { 
+                                                @: @mySection.name ,
+                                            }
+                                            )
+                                        </small>
+                                           <br>
+                                    </text>
+                                }
+                            }
+                        }
+                    </div>
+                    <div class="col-7">
+                        <div id="mySchemas"></div>
+                    </div>
+                    <div class="col-4"></div>
+                    <div class="col-7">
+                        <a class="btn btn-md u-btn-primary g-font-weight-600 g-font-size-12 text-uppercase slickyButton g-mt-20 g-mb-20" href="javascript:;" onclick="saveGroupSchemas(); return false;">
+                            Save Selection
+                        </a>
+                    </div>
+                </div>
+                
+
+
+            </div>
+        </div>
+
+
+    
+
+    </div>
+</section>
+
+
+<div class="modal fade" id="propertyModal" role="dialog">
+    <div class="modal-dialog   modal-lg" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom:0px;cursor:pointer">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 " >
+                        <h4>Select Visible Properties</h4>
+                    </div>
+                    <div class="col-md-12 ">
+                        <div class="row" id="mySchemaProperty">
+
+                        </div>
+
+                    </div>
+                    <div class="col-md-12 ">
+                        <a class="btn btn-md u-btn-primary g-font-weight-600 g-font-size-12 text-uppercase slickyButton g-mt-20 g-mb-20" href="javascript:;" onclick="saveProperties(); return false;">
+                            Save Visibility
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(function () {
+
+        $('#categoryId').val('@ViewBag.categoryId');
+
+    });
+
+
+    var SCHEMATYPES = [
+       @foreach (var type in Enum.GetValues(typeof(Datatype)))
+          {
+            @: '@Enum.GetName(typeof(Datatype), type)' ,
+          }
+    ];
+
+    function ShowSchemas(groupId) {
+        $('#mySchemas').html('')
+    }
+
+
+    function getMasterSchemas(groupId) {
+        $('#mySchemas').html('');
+        ajaxCall("GET", null, "ISchema?parentId=1", null, null,data=>
+        {
+            for (var i = 0; i < data.length; i++) {
+                $('#mySchemas').append(`<div ><input type="checkbox" id="val_` + data[i].id + `" value="` + data[i].id + `"  style="width:50px" onClick='toggleSchemaToGroup("` + groupId + `",` + data[i].id + `);' > <a href='#' onClick='getProperties(` + data[i].id + `);return false;'>` + data[i].name + `</a></div>`);
+            }
+            categoryGroup = [];
+            ajaxCall("GET", null, "WebsiteGroupSchema?groupName=" + groupId , null, null, groupSchemas => {
+                for (var i = 0; i < groupSchemas.length; i++) {
+                    categoryGroup.push(groupSchemas[i]);
+                    $("#val_" + groupSchemas[i].schemaId).prop("checked", true);
+                }
+            })
+
+
+         });
+    }
+
+    var categoryGroup = [];
+    function toggleSchemaToGroup(groupId, schemaID) {
+
+        var myGroups = categoryGroup.filter(x => x.groupName == groupId && x.schemaId == schemaID);
+
+        if (myGroups.length > 0)
+            categoryGroup = categoryGroup.filter(x => !(x.groupName == groupId && x.schemaId == schemaID));
+        else {
+
+            categoryGroup.push({ groupName: groupId, schemaId: schemaID, id: e7() });
+        }
+
+    }
+
+    function saveGroupSchemas() {
+
+        ajaxCall("POST", categoryGroup, "WebsiteGroupSchema","Groups Saved");
+    }
+
+    function getProperties(schemaId) {
+
+        ajaxCall("GET", null, "ISchema?showLevel1Properties=true&id=" + schemaId, null, null, data => {
+            $('#mySchemaProperty').html('');
+            $('#propertyModal').modal('show');
+            if (data.length == 1) {
+                var properties = data[0].properties;
+                Properties = properties;
+                for (var i = 0; i < properties.length; i++) {
+                    var isChecked = properties[i].visible ? "checked" : "";
+                    var isBold = SCHEMATYPES[properties[i].datatype] == "_schema" ? " style='font-weight:800;padding-bottom:10px;'" : "style='padding-bottom:10px;'";
+                    var showDetails = SCHEMATYPES[properties[i].datatype] == "_schema" ? "style='display:none;'" : "";
+                    var myDiv = `<div class='col-4' ` + isBold + `><input type="checkbox" id="prop_` + properties[i].id + `" ` + isChecked + ` value="` + properties[i].id + `"  style="width:50px" onClick="toggleProperty(` + properties[i].id + `,$(this).prop('checked'));" > ` + properties[i].name + `</div><div class='col-3'><span ` + showDetails + `>  [ ` + SCHEMATYPES[properties[i].datatype] + ` ] </span></div>`;
+                    myDiv += `<div class='col-5'> <input type=text id=id="friend_` + properties[i].id + `" value="` + (properties[i].friendlyName ?? '') + `" style="width:200px;" onChange="savePropertyFriendlyName(` + properties[i].id + `,$(this).val());">  </div>`;
+                    $('#mySchemaProperty').append(myDiv);
+                }
+            }
+
+        });
+    }
+
+
+    var Properties = [];
+    function toggleProperty(id,isChecked) {
+        var myProp = Properties.find(x => x.id == id);
+        myProp.visible = isChecked;  
+    } 
+
+    function savePropertyFriendlyName(id, value) {
+        var myProp = Properties.find(x => x.id == id);
+        myProp.friendlyName = value;
+    }
+
+    function saveProperties() {
+
+        ajaxCall("POST", Properties, "SchemaProperty", "Groups Saved");
+    }
+
+</script>
+

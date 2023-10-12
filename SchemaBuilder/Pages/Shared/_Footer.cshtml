@@ -1,0 +1,15 @@
+﻿@if (ViewBag.isPopUp != null && ViewBag.isPopUp)
+{
+    return;
+}
+
+<style>
+    @@media (max-width: 767px) {
+        .app-footer {
+            display: none;
+        }
+    }
+</style>
+<div class="app-footer app-footer-custom ant-layout-footer" style="width: calc(100% - 240px);">
+    <div class="footer-inner-v1"><span class="small">© @DateTime.Today.Year <a class="brand" target="_blank" href="https://www.3genii.com">3Genii</a></span><span class="small">Built with Love <i class="anticon anticon-heart-o"></i></span></div>
+</div>

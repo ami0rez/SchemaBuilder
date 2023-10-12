@@ -1,0 +1,152 @@
+﻿@using SlickyCommonLibrary.DomainUI;
+@using SlickyCommonLibrary.Enums;
+
+
+<style>
+    .hide-scrollbar::-webkit-scrollbar {
+        width: 0;
+    }
+
+    @@media (max-width: 767px) {
+        .btn-upgrade {
+            display: none;
+        }
+
+        .app-sidenav.ant-layout-sider-collapsed .sidenav-footer .nav-text {
+            display: inline;
+        }
+    }
+
+    .ant-menu-item a:hover, .ant-menu-submenu-title span:hover {
+        color: #3EB7ED !important;
+    }
+
+        .ant-menu-item a:hover i svg, .ant-menu-submenu-title span:hover i svg {
+            stroke: #3EB7ED !important;
+        }
+
+    .anticon svg {
+        stroke: #7B8794;
+        height: 25px;
+        width: 25px;
+    }
+
+    .ant-menu-submenu-active > .ant-menu-submenu-active-element {
+        background: rgba(224, 245, 255, 0.4) !important;
+        border-radius: 10px !important;
+    }
+
+    .ant-menu-submenu-active.ant-menu-submenu-active-element {
+        background: rgba(224, 245, 255, 0.4) !important;
+        border-radius: 10px !important;
+    }
+
+    .ant-menu-item-selected {
+        background-color: #FEFEFE !important;
+    }
+
+    .ant-menu-submenu-active > a > i > svg {
+        stroke: #3EB7ED;
+    }
+
+    .ant-menu-submenu-active > a {
+        color: #3EB7ED;
+    }
+
+    .small-menu-icons {
+        padding: 0 !important;
+    }
+
+    .ant-menu-item > a, .ant-menu-submenu-title > span {
+        min-width: 25px;
+        margin-left: -5px !important;
+    }
+
+    .ant-menu-inline .ant-menu-item-selected:after {
+        color: inherit !important;
+        border-right: 0px;
+    }
+
+    .ant-menu-inline-uls {
+        margin-left: 7px !important;
+    }
+
+    .upgrade-gradient-box {
+        position: absolute;
+        width: 194px;
+        height: 45px;
+        background: linear-gradient(94.39deg, #5EF5F8 6.03%, #3EB7ED 53.91%, #2ADDA1 96.11%);
+    }
+
+        .upgrade-gradient-box > span {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+        }
+</style>
+
+<div class="app-sidenav-container isPopUp" id="app-sidenav-container">
+    <div class="app-sidenav d-md-flex ant-layout-sider" id="app-sidenav" style="flex: 0 0 240px; max-width: 0; min-width: 0; width: 0;">
+        <div class="ant-layout-sider-children" style="background: #FEFEFE">
+            <section class="sidenav-header" style="padding: 0; padding-left: 15px;">
+                <a href="../home/dashboard" class="d-none d-md-inline">
+                    <img src="~/img/logo/Small_Slicky_blocks_Logo.png" style="max-height:40px;margin-top:10px;" class="smallLogo">
+                    <span class="largeLogo">Schema Builder</span>
+                    
+                </a>
+            </section>
+            <div class="sidenav-content hide-scrollbar" style="margin-bottom: 40px;">
+
+                <ul class="ant-menu ant-menu-root ant-menu-inline mb-5" role="menu" id="ant-main-menu" style="background: #FEFEFE;">
+                    <li class=" ant-menu-item-divider" style="margin-bottom:20px;"></li>
+                    <li class="ant-menu-item ant-menu-submenu-active-element" role="menuitem" style="padding-left: 24px;" id="dashboard">
+
+                        <a href="~/Schema/Builder" class="d-flex w-100 justify-content-start align-items-center">
+                            <i class="anticon">
+                                <svg viewBox="1 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4 8.59977V20.9998H20V8.59977" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M15 21V15C15 13.895 14.105 13 13 13H11C9.895 13 9 13.895 9 15V21" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M2 10L12 3L22 10" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </i>
+                            <span class="menu-collapsed" id="homeMenuSpan">Builder</span>
+                        </a>
+
+                    </li>
+                    <li class="ant-menu-item ant-menu-submenu-active-element" role="menuitem" style="padding-left: 24px;" id="dashboard">
+
+                        <a href="~/Schema/GroupBuilder" class="d-flex w-100 justify-content-start align-items-center">
+                            <i class="anticon">
+                                <svg viewBox="1 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4 8.59977V20.9998H20V8.59977" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M15 21V15C15 13.895 14.105 13 13 13H11C9.895 13 9 13.895 9 15V21" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M2 10L12 3L22 10" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </i>
+                            <span class="menu-collapsed" id="homeMenuSpan">Group Builder</span>
+                        </a>
+
+                    </li>
+                    <li class="ant-menu-item ant-menu-submenu-active-element" role="menuitem" style="padding-left: 24px;" id="dashboard">
+
+                        <a href="~/Schema/Integration" class="d-flex w-100 justify-content-start align-items-center">
+                            <i class="anticon">
+                                <svg viewBox="1 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4 8.59977V20.9998H20V8.59977" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M15 21V15C15 13.895 14.105 13 13 13H11C9.895 13 9 13.895 9 15V21" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M2 10L12 3L22 10" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </i>
+                            <span class="menu-collapsed" id="homeMenuSpan">Integration</span>
+                        </a>
+
+                    </li>
+                </ul>
+
+            </div>
+
+        </div>
+    </div>
+</div>

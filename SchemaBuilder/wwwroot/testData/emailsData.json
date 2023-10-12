@@ -1,0 +1,264 @@
+{
+  "myCount": 33,
+  "items": [
+    {
+      "dateStamp": "7/28/2023 1:19:19",
+      "from": "tarik@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "7/19/2023 5:31:44",
+      "from": "SouadMassi@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": false
+    },
+    {
+      "dateStamp": "7/6/2023 12:24:28",
+      "from": "achraf@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": false
+    },
+    {
+      "dateStamp": "6/28/2023 9:21:12",
+      "from": "abla@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "6/28/2023 2:39:50",
+      "from": "oumaimarf@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": true
+    },
+    {
+      "dateStamp": "6/28/2023 2:37:19",
+      "from": "afla@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": true
+    },
+    {
+      "dateStamp": "6/28/2023 2:33:35",
+      "from": "afla@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "6/27/2023 2:11:54",
+      "from": "oumaimarf@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": true
+    },
+    {
+      "dateStamp": "6/24/2023 11:36:22 AM",
+      "from": "oumaimarf@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "6/23/2023 2:58:07",
+      "from": "akchach@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "6/22/2023 10:47:42 AM",
+      "from": "fadoua@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "6/22/2023 10:41:31 AM",
+      "from": "kamalrf@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "6/21/2023 6:42:03",
+      "from": "anay@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": true
+    },
+    {
+      "dateStamp": "6/21/2023 3:45:08",
+      "from": "ily10@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": false
+    },
+    {
+      "dateStamp": "6/20/2023 1:32:22",
+      "from": "anay@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "4/28/2023 3:45:02",
+      "from": "soumia@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "4/19/2023 3:12:19",
+      "from": "nayla@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": true
+    },
+    {
+      "dateStamp": "4/19/2023 2:48:06",
+      "from": "nayla@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": true
+    },
+    {
+      "dateStamp": "4/18/2023 2:04:55",
+      "from": "nayla@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "4/15/2023 2:50:07",
+      "from": "ahmad@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": true
+    },
+    {
+      "dateStamp": "4/15/2023 2:24:35",
+      "from": "ahmad@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": true
+    },
+    {
+      "dateStamp": "4/15/2023 2:18:42",
+      "from": "ahmad@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": true
+    },
+    {
+      "dateStamp": "4/15/2023 2:13:59",
+      "from": "ahmad@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "4/14/2023 12:38:01",
+      "from": "ayla@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "4/11/2023 2:57:58",
+      "from": "aycha@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": true
+    },
+    {
+      "dateStamp": "4/11/2023 2:42:53",
+      "from": "aycha@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": true
+    },
+    {
+      "dateStamp": "4/11/2023 12:11:16",
+      "from": "loubna@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your refund is on the way",
+      "status": false
+    },
+    {
+      "dateStamp": "4/11/2023 12:08:24",
+      "from": "loubna@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": false
+    },
+    {
+      "dateStamp": "4/11/2023 12:04:46",
+      "from": "loubna@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your refund is on the way",
+      "status": false
+    },
+    {
+      "dateStamp": "4/11/2023 11:48:15 AM",
+      "from": "loubna@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": false
+    },
+    {
+      "dateStamp": "4/11/2023 11:20:34 AM",
+      "from": "loubna@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": false
+    },
+    {
+      "dateStamp": "4/8/2023 2:00:57",
+      "from": "awatif@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": false
+    },
+    {
+      "dateStamp": "4/8/2023 1:52:05",
+      "from": "awatif@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": false
+    },
+    {
+      "dateStamp": "4/8/2023 12:34:46",
+      "from": "awatif@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": false
+    },
+    {
+      "dateStamp": "4/7/2023 4:03:22",
+      "from": "awatif@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": false
+    },
+    {
+      "dateStamp": "4/7/2023 2:18:27",
+      "from": "awatif@gmail.com;",
+      "to": "info@3genii.com",
+      "subject": "Your order is confirmed",
+      "status": false
+    },
+    {
+      "dateStamp": "4/7/2023 2:15:24",
+      "from": "awatif@gmail.com",
+      "to": "info@3genii.com",
+      "subject": "Thank you for your registration",
+      "status": false
+    }
+  ]
+}

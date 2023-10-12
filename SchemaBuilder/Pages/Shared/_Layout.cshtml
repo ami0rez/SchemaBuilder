@@ -1,0 +1,124 @@
+﻿@using SlickyCommonLibrary.DomainUI;
+@using SlickyCommonLibrary.Enums;
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Model.HttpContext).RequestToken;
+    }
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="MVP Builder- 3Genii builds Minimum Valuable Products Exclusivelly">
+    <meta name="description" content="Slicky is our MVP builder Engine- Web designer and load libaries">
+
+
+    <title> Slicky- 3Genii's Web Builder- Web Designer</title>
+    <!-- BEGIN STYLESHEETS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="~/lib/Ant/bootstrap4.1.2.css" rel="stylesheet" />
+    <link href="~/css/theme-default/libs/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link type="text/css" rel="stylesheet" href="~/css/theme-default/material-design-iconic-font.min.css?1421434286" />
+
+    <link href="~/lib/Ant/8ant.css" rel="stylesheet" />
+    <link href="~/lib/Ant/1ant.css" rel="stylesheet" />
+    <link href="~/lib/Ant/2ant.css" rel="stylesheet" />
+    <link href="~/lib/Ant/3ant.css" rel="stylesheet" />
+    <link href="~/lib/Ant/4ant.css" rel="stylesheet" />
+    <link href="~/lib/Ant/5ant.css" rel="stylesheet" />
+    <link href="~/lib/Ant/6ant.css" rel="stylesheet" />
+    <link href="~/lib/Ant/7ant.css" rel="stylesheet" />
+
+    <link type="text/css" rel="stylesheet" href="~/css/theme-default/libs/jquery-ui/jquery-ui-theme.css" />
+    @RenderSection("css", required: false)
+    <link type="text/css" rel="stylesheet" href="~/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/styleV2.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/dropzone.css?v=1424887876" />
+    <link type="text/css" rel="stylesheet" href="~/css/theme-default/libs/toastr/toastr.css?1425466569" />
+
+    <style>
+        .dropzone {
+            border: 2px dashed #0087F7;
+            border-radius: 5px;
+            background: white;
+        }
+
+            .dropzone .dz-message {
+                font-weight: 400;
+            }
+
+
+        dropzone .dz-message .note {
+            font-size: 0.8em;
+            font-weight: 200;
+            display: block;
+            margin-top: 1.4rem;
+        }
+    </style>
+
+</head>
+<body class="menubar-hoverable header-fixed " style="overflow-x: hidden;">
+    <div id="app-layout-container">
+        <div class="app-layout ant-layout ant-layout-has-sider" id="app-layout2" style="overflow-y:hidden">
+            @Html.Partial("_Menu")
+            <div class="ant-layout" id="ant-layout">
+                @Html.Partial("_Header")
+                <div class="section-body">
+                    @RenderBody()
+                </div>
+                @Html.Partial("_Footer")
+            </div>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/f0850163ab.js" crossorigin="anonymous"></script>
+    <script src="~/js/libs/jquery/jquery-3.5.1.js"></script>
+    <script src="~/js/libs/popper/popper.1.12.9.min.js"></script>
+    <script src="~/js/libs/bootstrap4/Bootstrap4.1.3.min.js"></script>
+
+    <script src="~/js/libs/spin.js/spin.min.js"></script>
+    <script src="~/js/libs/autosize/jquery.autosize.min.js"></script>
+    <script src="~/js/libs/nanoscroller/jquery.nanoscroller.min.js"></script>
+    <script src="~/js/libs/toastr/toastr.js"></script>
+    <script src="~/js/libs/moment/moment.js"></script>
+    <script src="~/js/libs/jquery/jquery.timeago.js"></script>
+    <script src="~/js/script.js"></script>
+    <script src="~/js/SlickyMenu.js"></script>
+    <script src="~/js/DomainUIs.js"></script>
+
+    <script>
+
+        ajaxCallServer = 'https://localhost:7141';
+
+        $(document).ready(function () {
+
+            console.log('load header, menu');
+            isPopUp = getQueryStringParameter("isPopUp");
+            loadMenu("@ViewBag.title");
+            loadHeader();
+            loadInputSettings();
+        });
+    </script>
+
+    @RenderSection("scripts", required: false)
+
+
+    <script src="~/js/core/source/App.js"></script>
+    <script src="~/js/core/source/AppNavigation.js"></script>
+    <script src="~/js/core/source/AppOffcanvas.js"></script>
+    <script src="~/js/core/source/AppCard.js"></script>
+    <script src="~/js/core/source/AppForm.js"></script>
+    <script src="~/js/core/source/AppNavSearch.js"></script>
+    <script src="~/js/core/source/AppVendor.js"></script>
+    @RenderSection("Demoscripts", required: false)
+
+
+</body>
+</html>
