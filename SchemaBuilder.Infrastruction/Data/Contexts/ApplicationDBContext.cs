@@ -23,7 +23,7 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                 var category1 = new Category
                 {
                     id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc9"),
-                    name = "My Category C",
+                    name = "Food",
                     naics = "string",
                     popularity = 0,
                     fullName = "string",
@@ -33,94 +33,102 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                         {
                             id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc0"),
                             name = "Section 1",
-                            description = "Block 1",
-                            groupName = "Block 1"
+                            description = "Restaurants",
+                            groupName = "Restaurants"
                         },
                         new WebsiteSection
                         {
                             id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc1"),
                             name = "Section 2",
-                            description = "Block 1",
-                            groupName = "Block 1"
+                            description = "Restaurants",
+                            groupName = "Restaurants"
                         },
                         new WebsiteSection
                         {
                             id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc2"),
                             name = "Section 3",
-                            description = "Block 1",
-                            groupName = "Block 1"
+                            description = "Restaurants",
+                            groupName = "Restaurants"
                         },
                         new WebsiteSection
                         {
                             id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc3"),
                             name = "Section 4",
-                            description = "Block 1",
-                            groupName = "Block 1"
+                            description = "Restaurants",
+                            groupName = "Restaurants"
                         },
                         new WebsiteSection
                         {
                             id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc4"),
                             name = "Section 5",
-                            description = "Block 2",
-                            groupName = "Block 2"
+                            description = "Coffes",
+                            groupName = "Coffes"
                         },
                         new WebsiteSection
                         {
                             id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc5"),
                             name = "Section 6",
-                            description = "Block 2",
-                            groupName = "Block 2"
+                            description = "Coffes",
+                            groupName = "Coffes"
                         },
                     }
                 };
                 Categories.Add(category1);
 
-                //var category2 = new Category
-                //{
-                //    id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc9"),
-                //    name = "My Category C",
-                //    naics = "string",
-                //    popularity = 0,
-                //    fullName = "string",
-                //    websiteSections = new List<WebsiteSection>
-                //    {
-                //        new WebsiteSection
-                //        {
-                //            id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc0"),
-                //            name = "Section 3",
-                //            description = "Block 3",
-                //            groupName = "Block 3"
-                //        },
-                //    }
-                //};
-                //Categories.Add(category2);
-
-                //var category3 = new Category
-                //{
-                //    id = Guid.Parse("your_second_category_id_here"),
-                //    name = "Your Second Category",
-                //    naics = "another_string",
-                //    popularity = 1,
-                //    fullName = "another_string",
-                //    websiteSections = new List<WebsiteSection>
-                //    {
-                //        new WebsiteSection
-                //        {
-                //            id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc6"),
-                //            name = "Section 7",
-                //            description = "Block 3",
-                //            groupName = "Block 3"
-                //        },
-                //        new WebsiteSection
-                //        {
-                //            id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afc7"),
-                //            name = "Section 8",
-                //            description = "Block 4",
-                //            groupName = "Block 4"
-                //        },
-                //    }
-                //};
-                //Categories.Add(category3);
+                var category2 = new Category
+                {
+                    id = Guid.Parse("3fb85f64-5717-4562-b3fc-2c963f66afc9"),
+                    name = "Advertizing",
+                    naics = "string",
+                    popularity = 0,
+                    fullName = "string",
+                    websiteSections = new List<WebsiteSection>
+                    {
+                        new WebsiteSection
+                        {
+                            id = Guid.Parse("3fb85f64-5717-4562-b3fc-2c963f66afc0"),
+                            name = "Section 1",
+                            description = "Social Media",
+                            groupName = "Social Media"
+                        },
+                        new WebsiteSection
+                        {
+                            id = Guid.Parse("3fb85f64-5717-4562-b3fc-2c963f66afc1"),
+                            name = "Section 2",
+                            description = "Social Media",
+                            groupName = "Social Media"
+                        },
+                        new WebsiteSection
+                        {
+                            id = Guid.Parse("3fb85f64-5717-4562-b3fc-2c963f66afc2"),
+                            name = "Section 3",
+                            description = "Snacks",
+                            groupName = "Snacks"
+                        },
+                        new WebsiteSection
+                        {
+                            id = Guid.Parse("3fb85f64-5717-4562-b3fc-2c963f66afc3"),
+                            name = "Section 4",
+                            description = "Snacks",
+                            groupName = "Snacks"
+                        },
+                        new WebsiteSection
+                        {
+                            id = Guid.Parse("3fb85f64-5717-4562-b3fc-2c963f66afc4"),
+                            name = "Section 5",
+                            description = "Soccer",
+                            groupName = "Soccer"
+                        },
+                        new WebsiteSection
+                        {
+                            id = Guid.Parse("3fb85f64-5717-4562-b3fc-2c963f66afc5"),
+                            name = "Section 6",
+                            description = "Soccer",
+                            groupName = "Soccer"
+                        },
+                    }
+                };
+                Categories.Add(category2);
             }
 
             if (!Schemas.Any())
@@ -221,7 +229,7 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                 var websiteGroupSchema = new WebsiteGroupSchema
                 {
                     id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa8"),
-                    groupName = "Block 1",
+                    groupName = "Restaurants",
                     schemaId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
                 };
                 WebsiteGroupSchemas.Add(websiteGroupSchema);

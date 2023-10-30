@@ -1,4 +1,6 @@
 ﻿@page
+@using SlickyCommonLibrary.Enums;
+@using SlickyCommonLibrary.Domain;
 @model SchemaBuilder.Pages.Schema.BuilderModel
 @{
     ViewBag.title = "title";
@@ -70,213 +72,215 @@
     }
 </style>
 
-    
-<section class="container">
-
-    <div class="section-body contain-lg clients_read">
-        Select Schema:
-        <div class="margin-bottom-20">
-            <select class="form-control rounded-right" placeholder="Select" id="productId"  name="productId" onchange="window.location= '/?productId=' + $(this).val()">
-                @*@if (Model.parentsSchema.Any())
-                {
-                    foreach (var s in Model.parentsSchema)
-                    {
-                        @: <option value="@s.id"> @s.name </option>
-                        }
-                    }*@
-            </select>
-        </div>
-
+<section class="container-fluid container-mw-xxl chapter">
+    <div class="section-header">
+        <ol class="breadcrumb">
+            <li>Schema </li>
+            <li class="">Builder</li>
+        </ol>
     </div>
 
-        <div class="section-body contain-lg clients_read">
+<div class="section-body contain-lg">
 
-            <div class="box box-default users_read">
-                <div class="box-header style-standard">
-                    JSON-LD View
+    <div class="form" role="form">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="box box-default users_read">
+                    <div class="box-header style-standard">
+                        Select Schema
+                    </div>
+                    <div class="box-body style-default-bright form">
+                        <select class="form-control rounded-right" placeholder="Select" id="schemaId"  name="productId" onchange="updateSelectedCategories"></select>
+                    </div>
                 </div>
-                <div class="box-body style-default-bright form">
-                    <pre class="  prettyprint  ">
-                    <ol class="linenums">
+                <div class="box box-default users_read">
+                    <div class="box-header style-standard">
+                        JSON-LD View
+                    </div>
+                    <div class="box-body style-default-bright form">
+                         <pre class="  prettyprint  ">
+                            <ol class="linenums">
 
-                    <li><span class="tagc">&lt;script</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"application/ld+json"</span><span class="tagc">&gt;</span><span class="pln"></span></li>
-                    <li><span class="pln"></span><span class="pun">{</span><span class="pln"></span></li>
-                    <li><span class="pln">&nbsp; </span><span class="str">"@@context"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"https://schema.org"</span><span class="pun">,</span><span class="pln"></span></li>
-                @{
-
-                    //if (schema != null)
-                    //{
-                       
-                    //        @Html.Raw(printJSONProperties(schema))
-                       
-                    //}
-
-
-                }
-
-
-                    <li><span class="pln"></span><span class="pun">}</span><span class="pln"></span></li>
-                    <li><span class="pln"></span><span class="tagc">&lt;/script&gt;</span></li>
-                    </ol></pre>
-
+                            <li><span class="tagc">&lt;script</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"application/ld+json"</span><span class="tagc">&gt;</span><span class="pln"></span></li>
+                            <li><span class="pln"></span><span class="pun">{</span><span class="pln"></span></li>
+                            <li id="preContent"><span class="pln">&nbsp; </span><span class="str">"@@context"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"https://schema.org"</span><span class="pun">,</span><span class="pln"></span></li>
+                            <li><span class="pln"></span><span class="pun">}</span><span class="pln"></span></li>
+                            <li><span class="pln"></span><span class="tagc">&lt;/script&gt;</span></li>
+                            </ol>
+                        </pre>
+                    </div>
                 </div>
+
+                <div class="box box-default users_read">
+                    <div class="box-header style-standard">
+                         Hierachy View
+                    </div>
+                    <div class="box-body style-default-bright form" id="hirearchy">
+                    </div>
+                </div>
+
             </div>
-
-
-            <div class="box box-default users_read">
-                <div class="box-header style-standard">
-                    Hierachy View
-                </div>
-                <div class="box-body style-default-bright form">
-
-
-                    @*@{
-
-                        if (schema != null)
-                        {
-
-                            @Html.Raw(printSchemaProperties(schema))
-                        }
-
-
-                    }*@
-
-
-
-
-
-
-                </div>
-            </div>
-
         </div>
+    </div>
+    </div>
 </section>
 
 @section scripts
     {
     <script src="~/js/libs/jquery-ui/jquery-ui.min.js"></script>
 }
-
-<script>
-
-     @*$(function () {
-
-       $('#productId').val(@Model.schema.id);
-
-    });*@
-
-    function printSchemaProperties(schema)
+@section DemoScripts
     {
-        if (schema == null)
-            return "";
-        var line = schema.name + "<br><ul>";
+    <script>
+
+        var Datatype = {
+            @foreach (var type in Enum.GetValues(typeof(Datatype)))
+            {
+                @: '@Enum.GetName(typeof(Datatype), type)': @((int)type),
+            }
+        };
+
+        var DatatypeDescription = [
+            @foreach (Datatype type in Enum.GetValues(typeof(Datatype)))
+            {
+                @: '@(type.GetDescription())',
+            }
+        ];
+
+        var categories = [];
+        var sections = [];
+        var websiteGroupSchema = [];
+        var categoryGroup = [];
+        var schemas = [];
+        var Properties = [];
 
 
-        if (schema.properties != null && schema.properties.Count() > 0)
-        {
-            //foreach (var p in schema.properties)
-            //{
-            //    if (p.datatype == Datatype._schema)
-            //    {
-            //        line += "<li>" + p.name + ", Type: " + printSchemaProperties(p.schemaDataType) + "</li>";
-            //        //    line += "<li>" + p.name + ", Type: " + p.schemaDataType.name + "</li>";
-            //    }
-            //    else
-            //    {
-            //        line += "<li>" + p.name + ", Type: " + p.datatype.GetDescription() + "</li>";
-            //    }
-            //}
+        (async () => {
+            var mySchemaPromise = getPromiseData("Schema", "showLevel1Properties=true");
+            await loadPromise(mySchemaPromise, "schemas");
+            
+            addSchemasToDropdown();
+
+            if(schemas && schemas.length){
+                printJSONProperties(schemas[0])
+                printSchemaProperties(schemas[0])
+            }
+        })();
+
+        function addSchemasToDropdown() {
+            schemas.forEach(category => {
+                $(`#schemaId`).append(`<option value='${category.id}'>${category.name}</option>`);
+            })
         }
-        else
-        {
-            line += "<li ><span class='atn'>\"MISSING PROPERTIES\"</span></li>";
+
+        function updateSelectedCategories() {
         }
 
-        line += "</ul>";
-        return line;
-
-    }
-    var depth = 0;
-
-
-    function spaces(count)
-    {
-        var line = "&nbsp; ";
-        for (var i = 0; i < count; i++)
+        function printSchemaProperties(schema)
         {
-            line += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
+            if (schema == null)
+                return "";
+            var line = schema.name + "<br><ul>";
+
+
+            if (schema.properties != null && schema.properties.length > 0)
+            {
+                schema.properties.forEach(function (p, index) {
+                    if (p.datatype == Datatype.schema)
+                    {
+                        line += "<li>" + p.name + ", Type: " + printSchemaProperties(p.schemaDataType) + "</li>";
+                        //    line += "<li>" + p.name + ", Type: " + p.schemaDataType.name + "</li>";
+                    }
+                    else
+                    {
+                        line += "<li>" + p.name + ", Type: " + DatatypeDescription[p.datatype] + "</li>";
+                    }
+                })
+            }
+            else
+            {
+                line += "<li ><span class='atn'>\"MISSING PROPERTIES\"</span></li>";
+            }
+
+            line += "</ul>";
+            $('#hirearchy').html(line)
         }
-        return line;
-    }
+        var depth = 0;
 
-    function printJSONProperties(schema)
-    {
-            return "";
-        @*if (schema == null)
-            return "";
 
-        var line = "";
-        //var line = "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"@type\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + schema.name + "\"</span><span class='pun'>,</span><span class='pln'></span></li>";
+        function spaces(count)
+        {
+            var line = "&nbsp; ";
+            for (var i = 0; i < count; i++)
+            {
+                line += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
+            }
+            return line;
+        }
+
+        function printJSONProperties(schema)
+        {
+           if (schema == null)
+                return "";
+
+            var line = "";
+            var line = "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"@*type*@\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + schema.name + "\"</span><span class='pun'>,</span><span class='pln'></span></li>";
        
 
-        if (schema.properties != null && schema.properties.Count() > 0)
-        {
-            foreach (var p in schema.properties)
+            if (schema.properties != null && schema.properties.length > 0)
             {
+                schema.properties.forEach(function(p, index) {
+                    if (p.datatype == Datatype.schema)
+                    {
 
-                if (p.datatype == Datatype._schema)
-                {
+                        line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='pun'>{</span><span class='pln'></span></li>";
+                        depth += 1;
+                        line += printJSONProperties(p.schemaDataType) + "<li class='L8'><span class='pln'>" + spaces(depth) + " </span>";
+                        var comma = ",";
+                        if (p == schema.properties[schema.properties.length - 1])
+                        {
+                            comma = "";
+                        }
+                        line += "<span class='pun'>}" + comma + "</span><span class='pln'></span></li>";
+                        depth -= 1;
+                    }
+                    else
+                    {
+                        var comma = ",";
+                        if (p == schema.properties[schema.properties.length - 1])
+                        {
+                            comma = "";
+                        }
+                        if (p.datatype == Datatype.text)
+                        {
+                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"Some Value of type " + DatatypeDescription[p.datatype] + "\"</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
+                        }
+                        if (p.datatype == Datatype.bool)
+                        {
+                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>true</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
+                        }
+                        if (p.datatype == Datatype.date)
+                        {
+                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + DateTime.Today + "\"</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
 
-                    line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='pun'>{</span><span class='pln'></span></li>";
-                    depth += 1;
-                    line += printJSONProperties(p.schemaDataType) + "<li class='L8'><span class='pln'>" + spaces(depth) + " </span>";
-                    var comma = ",";
-                    if (p == schema.properties.Last())
-                    {
-                        comma = "";
-                    }
-                    line += "<span class='pun'>}" + comma + "</span><span class='pln'></span></li>";
-                    depth -= 1;
-                }
-                else
-                {
-                    var comma = ",";
-                    if (p == schema.properties.Last()  )
-                    {
-                        comma = "";
-                    }
-                    if (p.datatype == Datatype._text)
-                    {
-                        line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"Some Value of type " + p.datatype.GetDescription() + "\"</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-                    }
-                    if (p.datatype == Datatype._bool)
-                    {
-                        line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>true</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-                    }
-                    if (p.datatype == Datatype._date)
-                    {
-                        line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + DateTime.Today + "\"</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-
-                    }
-                    if (p.datatype == Datatype._number)
-                    {
-                        line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>1</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-                    }
+                        }
+                        if (p.datatype == Datatype.number)
+                        {
+                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>1</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
+                        }
 
 
-                }
+                    }
+                });
             }
+            else
+            {
+                line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='atn'>\"MISSING PROPERTIES\"</span></li>";
+            }
+            $('#preContent').after(line);
         }
-        else
-        {
-            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='atn'>\"MISSING PROPERTIES\"</span></li>";
-        }
-
-
-        return line;
-         *@
-    }
 
 
 
 </script>
+}
