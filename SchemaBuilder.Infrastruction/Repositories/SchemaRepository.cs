@@ -28,9 +28,28 @@ namespace SchemaBuilder.Infrastruction.Repositories
             {
                 schemasQuery = schemasQuery.Include(query => query.properties).AsQueryable();
             }
-            
+
+            var listOfGuids = new List<Guid>();
+            var listOfIds = filter.idList?.Split(',');
+
+            if (listOfIds != null)
+            {
+                foreach (var item in listOfIds)
+                {
+                    if (Guid.TryParse(item, out Guid parsedId))
+                    {
+                        listOfGuids.Add(parsedId);
+                    }
+                }
+            }
+
             return schemasQuery.Where(e => (
                     e.id == (filter.id.HasValue ? filter.id.Value : e.id) &&
+                    (
+                    string.IsNullOrEmpty(filter.idList) 
+                    || !listOfGuids.Any()
+                    || listOfGuids.Contains(e.id)
+                    ) &&
                     e.parentId == (filter.parentId.HasValue ? (filter.parentId.Value) : ((filter.showNoParents.HasValue ? (filter.showNoParents.Value ? null : e.parentId) : e.parentId))) &&
                     e.master == (filter.master.HasValue ? filter.master.Value : e.master)
                     ));

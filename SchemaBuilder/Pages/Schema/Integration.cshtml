@@ -23,24 +23,31 @@
                             Select Category:
                         </div>
                         <div class="box-body style-default-bright form">
-                            <select class="form-control rounded-right" placeholder="Select" id="categoryId" name="categoryId" onchange="loadFieldsFor($(this).val())"></select>
+                            <input id="categoryId" type="text" class="form-control rounded-right" />
                         </div>
                     </div>
                     <div class="box box-default users_read">
-                        <h2 id="SchemaTitle"></h2>
+                        <div class="box-header style-standard">
+                            Schema Editor
+                        </div>
                         <div class="box-body style-default-bright form">
-                            <div id="SchemaProperties" class="row"></div>
+                            <div class="container" id="schemasContainer" style="display:none;">
+                                <ul class="nav nav-tabs" id="myTabs">
+                                </ul>
+                                <div class="tab-content">
+                                </div>
+                            </div>
+                            <div class="container" id="noCategoryContainer">
+                                <h5>Select a Category to start editing</h5>
+                            </div>
+
+                            <div id="FullSchemaProperties"></div>
+                            <pre id="json-renderer"></pre>
+                            <div id="jsonld-container"></div>
                         </div>
 
-                        <div id="SavePropertiesToCoookie">
-                            <a class="btn btn-md u-btn-primary g-font-weight-600 g-font-size-12 text-uppercase slickyButton g-mt-20 g-mb-20" href="javascript:;" onclick="saveClientSchemas(); return false;">
-                                Save Client Info
-                            </a>
-
-                        </div>
 
 
-                        <div id="FullSchemaProperties"></div>
                     </div>
                 </div>
             </div>
@@ -51,6 +58,8 @@
 @section scripts
     {
     <script src="~/js/libs/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/lib/json-viwer/jquery.json-viewer.js"></script>
+
 }
 
 @section DemoScripts
@@ -62,163 +71,281 @@
         {
             @: '@Enum.GetName(typeof(Datatype), type)',
         }
-                    ];
+                                            ];
 
         var categories = [];
         var sections = [];
         var websiteGroupSchema = [];
         var categoryGroup = [];
-        var allSchemas = [];
         var schemas = [];
         var masterSchemas = [];
         var Properties = [];
-        var schemasSaved = [];
-        var myLenght = 0;
-        var myLenghtCount = 0;
+        var depth = 0;
+        var fieldsNames = [];
+        var WebGrpSchemaList = {};
+        var mySavedCookie = [];
 
 
         (async () => {
-            $('#categoryId').val('@ViewBag.categoryId');
-            var myPromise = getPromiseData("Category");
-            await loadPromise(myPromise, "categories");
-            addCategoriesToDropdown();
-
-
-            var myWebsiteSectionPromise = getPromiseData("WebsiteSection");
-            await loadPromise(myWebsiteSectionPromise, "sections");
-
-            
-            var mySchemaPromise = getPromiseData("Schema", "showLevel1Properties=true");
-            await loadPromise(mySchemaPromise, "allSchemas");
-
-            var myWebsiteGroupSchemaPromise = getPromiseData("WebsiteGroupSchema");
-            await loadPromise(myWebsiteGroupSchemaPromise, "websiteGroupSchema");
+            intializeAutocomplete();
+            renderJson();
         })();
 
-        function addCategoriesToDropdown() {
-            categories.forEach(category => {
-                $(`#categoryId`).append(`<option value='${category.id}'>${category.name}</option>`);
-            })
+        async function loadCategoryData(categoryId) {
+            var myWebsiteSectionPromise = getPromiseData("WebsiteSection", "categoryId=" + categoryId);
+            await loadPromise(myWebsiteSectionPromise, "sections");
+
+            var groupNames = sections.map(section => section.groupName);
+            var distinctGroupNames = groupNames.filter(function (item, index) {
+                return groupNames.indexOf(item) === index;
+            }).join(',');
+
+            var myWebsiteGroupSchemaPromise = getPromiseData("WebsiteGroupSchema", "groupNameList=" + distinctGroupNames);
+            await loadPromise(myWebsiteGroupSchemaPromise, "websiteGroupSchema");
+
+            var wgShemaIds = websiteGroupSchema.map(wgShema => wgShema.schemaId);
+            var distinctShemaIds = wgShemaIds.filter(function (item, index) {
+                return wgShemaIds.indexOf(item) === index;
+            }).join(',');
+
+            var mySchemaPromise = getPromiseData("Schema", "showLevel1Properties=true&idList=" + wgShemaIds);
+            await loadPromise(mySchemaPromise, "schemas");
+            schemas.sort((a, b) => (a > b) ? 1 : -1);
+
         }
 
+        function intializeAutocomplete() {
+            $("#categoryId").autocomplete({
+                source: async function (request, response) {
+                    var myPromise = getPromiseData("Category", "name=" + request.term);
+                    await loadPromise(myPromise, "categories");
+                    var categoriesData = categories.map((categ) => ({
+                        label: categ.name, // Displayed in the dropdown
+                        value: categ.id // The value to use when selected
+                    }));
+                    response(categoriesData);
+                },
+                select: async function (event, ui) {
+                    event.preventDefault();
+                    $("#categoryId").val(ui.item.label);
+                    await loadCategoryData(ui.item.value)
+                    refreshSelectedWebGrpSchema(ui.item.value)
+                },
+            });
+        }
 
-        function loadFieldsFor(categoryId) {
-            schemas = [];
-            schemasSaved = [];
-            var mySections = sections.filter(mysecton => mysecton.categoryID === categoryId);
-            if (mySections.length > 0) {
-                myLenght = mySections.length;
-                for (var i = 0; i < mySections.length; i++) {
-                    var groupSchemas = websiteGroupSchema.filter(gSchema => gSchema.groupName == mySections[i].groupName);
-                    myLenghtCount++;
-                    if (groupSchemas.length > 0) {
-                        var length = groupSchemas.length;
-                        for (var j = 0; j < length; j++) {
-                            if (!schemas.find(x => x == groupSchemas[j].schemaId))
-                                schemas.push(groupSchemas[j].schemaId);
-                        }
-                    }
-                    schemas.sort((a, b) => (a > b) ? 1 : -1);
-                    if (myLenghtCount == myLenght) {
-                        processDataEntry();
-                    }
-                }
+        function refreshSelectedWebGrpSchema(categoryId) {
+            if (categoryId) {
+                clearHtmlTabs();
+                $("#schemasContainer").show();
+                $("#noCategoryContainer").hide();
+            } else {
+                $("#schemasContainer").hide();
+                $("#noCategoryContainer").show();
+                return;
+            }
 
+            if (sections.length > 0) {
+                schemas.forEach(el => {
+                    displayWebsiteGroupSchemaFields(el);
+                });
 
             }
         }
 
-        function processDataEntry() {
-
-
-            schemas.every(el => {
-
-                if (schemasSaved.find(x => x == el) == null) {
-                    schemasSaved.push(el);
-                    return false;
-                }
+        function displayWebsiteGroupSchemaFields(schema) {
+            var schemaValid = verifyWebGrpSchema(schema);
+            if (schemaValid) {
+                addWebGrpSchemaTab(schema)
             }
-            );
-            displaySchemaFields(schemasSaved[schemasSaved.length - 1]);
         }
 
-        function displaySchemaFields(schemaId) {
-            $('#SchemaProperties').html('');
-            var data = allSchemas.filter(mySchema => mySchema.id == schemaId);
-            displayProperties(data);
-
-            $('#SavePropertiesToCoookie').show();
+        function verifyWebGrpSchema(schema) {
+            friendlyName = schema.friendlyName ?? schema.name;
+            if (schema.properties == null) {
+                console.log("--> It looks like we have a problem with this model name:" + friendlyName + ", model id: " + model.id);
+                return false;
+            }
+            return true;
         }
-        var depth = 0;
 
-        var fieldsNames = [];
-        var masterType = {};
-        function displayProperties(data, parentList) {
+        function addWebGrpSchemaTab(schema) {
 
             var friendlyName = "";
-            var spacing = (50 * depth) + "px";
+            var schemaId = schema.id;
 
-            var model = {};
-            var showButtonText = '';
+            WebGrpSchemaList[schemaId] = schema;
+
+            friendlyName = schema.friendlyName ?? schema.name;
+            var content = getWebGrpSchemaProperties(schema);
+            addNewHtmlTab(schemaId, friendlyName, content)
+        }
+
+        function getWebGrpSchemaProperties(schema) {
+
             var properties = [];
-            if (Array.isArray(data)) {
-                model = data[0];
-                parentList = model.name;
-                masterType = model;
-                friendlyName = model.name;
-                properties = model.properties;
-            }
-            else {
-                model = data;
-                friendlyName = model.friendlyName ?? model.name;
-                if (model.schemaDataType == null) {
-                    console.log("--> It looks like we have a problem with this model name:" + friendlyName + ", model id: " + model.id);
-                    return;
-                }
-                showButtonText = '<i class="fas fa-plus-circle" aria-hidden="true"></i>';
-                properties = model.schemaDataType.properties;
-            }
+            var schemaId = schema.id;
 
-            $('#SchemaProperties').append(`<div style="padding-top:10px;padding-left:` + spacing + `"><h3><a href="#" onClick="toggleClass('` + parentList + `');return false;">` + friendlyName + ` ` + showButtonText + ` </h3></div>`);
+            properties = schema.properties;
 
-
-
+            var propertiesHtml = '';
             properties.forEach(element => {
                 if (element.visible)
                     if (element.datatype != 4) {
-                        fieldsNames.push(parentList + '_' + element.name + '_1');
-                        $('#SchemaProperties').append(`
-                        <div class="${parentList} col-md-12"  style="padding-top:10px;padding-left:' + ${spacing} + '>
-                            <div class="form-group">
-                                <label for="${parentList}_${element.name}_1">${element.friendlyName ?? element.name}</label>
-                                <input type="text" class="form-control" id="${parentList}_${element.name}_1">
-                            </div>
+                        fieldsNames.push(schemaId + '_' + element.name + '_1');
+                        propertiesHtml += `
+                                            <div class="${schemaId} col-md-12">
+                                                <div class="form-group">
+                                                    <label for="${schemaId}_${element.name}">${element.friendlyName ?? element.name}</label>
+                                                    <input type="text" class="form-control" id="${schemaId}_${element.name}">
+                                                </div>
+                                            </div>
+                                            `;
+                    }
+            });
+            propertiesHtml += `
+                                        <button class="ml-3 ant-btn btn-cta btn-primary btn-spinner" onClick="showSchemasWithData('${schemaId}')">Show Schema with data</button>
+                            `;
+            return propertiesHtml;
+
+        }
+
+        function addNewHtmlTab(tabIndex, name, content) {
+            // Create new tab link and content
+            var newTabLink = $('<a>', {
+                'class': 'nav-link',
+                'id': 'tab' + tabIndex + '-tab',
+                'data-toggle': 'tab',
+                'href': '#tab' + tabIndex
+            }).text(name);
+
+            var newTabContent = $('<div>', {
+                'class': 'tab-pane fade',
+                'id': 'tab' + tabIndex
+            }).html(
+                `
+                    <h5>Schema Properties</h5>
+                    <div id="SchemaProperties_${tabIndex}" class="row">
+                        ${content}
+                    </div>
+                    <br/>
+                    <br/>
+                    <div id="schemaDisplay_${tabIndex}" class="row" style=" padding: 0 10px;display:none;">
+                        <h5>Result JSON-LD</h5>
+                        <div class="col-md-12" style=" border: solid thin #333; border-radius: 5px; margin: 0; background-color: #fff; position: relative;">
+                            <pre id="jsonviewer_${tabIndex}" class="col-md-12"></pre>
+                            <span style=" position: absolute; top: 10px; right: 10px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; width: 30px; height: 30px; font-size: 1.3em; display: flex; justify-content: center; align-items: center; cursor: pointer; ">
+                                <i class="fa fa-copy icon" data-icon="fa fa-copy" onclick="copySchemaJsonLD('${tabIndex}')"></i>
+                            </span>
                         </div>
-                        `);
-                    }
-            });
+                    </div>
+                `
+            );
 
-            properties.forEach(element => {
-                if (element.visible) {
-                    if (element.datatype == 4) {
-                        depth++;
-                        displayProperties(element, (parentList == null ? '' : parentList + '_') + element.name);
-                        depth--;
-                    }
+            // Append new tab link and content
+            $('#myTabs').append($('<li>', {
+                'class': 'nav-item'
+            }).append(newTabLink));
+
+            $('.tab-content').append(newTabContent);
+
+            // Activate the new tab
+            newTabLink.tab('show');
+        }
+
+        function clearHtmlTabs() {
+            $('#myTabs').empty();
+            $('.tab-content').empty();
+        }
+
+        function copySchemaJsonLD(schemaId) {
+            var mySchemData = WebGrpSchemaList[schemaId];
+            var schemaObject = generateJSONObject(mySchemData, {});
+
+            var jsonString = JSON.stringify(schemaObject, null, 2);
+            jsonString = `<script type="application/ld+json">\n${jsonString}\n<\/script>`
+
+            // Create a temporary textarea to copy the text to the clipboard
+            var textarea = document.createElement('textarea');
+            textarea.value = jsonString;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+
+            // Append the textarea to the body
+            document.body.appendChild(textarea);
+
+            // Select the text in the textarea
+            textarea.select();
+            textarea.setSelectionRange(0, jsonString.length);
+
+            // Copy the selected text to the clipboard
+            document.execCommand('copy');
+
+            // Remove the textarea from the DOM
+            document.body.removeChild(textarea);
+        }
+
+        function showSchemasWithData(schemaId) {
+
+            var mySchemData = WebGrpSchemaList[schemaId];
+            var fullschemas = generateJSONObject(mySchemData, {});
+            
+            $(`#schemaDisplay_${schemaId}`).show();
+            renderJson(schemaId, fullschemas);
+        }
+
+        function renderJson(schemaId, input) {
+            var options = {
+                collapsed: false,
+                rootCollapsable: false,
+                withQuotes: false,
+                withLinks: true,
+                footer: '<span><</span>/script<span>></span>',
+                header: '<span><</span>script type="application/ld+json"<span>></span>'
+            };
+            $(`#jsonviewer_${schemaId}`).jsonViewer(input, options);
+        }
+
+        function generateJSONObject(schema) {
+            let result = {
+
+                "@@type": schema.name
+            };
+            var properties = schema.properties;
+            properties.forEach(property => {
+                // Map data types from enum to string
+                const dataTypeMapping = {
+                    0: 'text',
+                    1: 'boolean',
+                    2: 'number',
+                    3: 'date',
+                    4: 'schema',
+                    5: 'time',
+                    6: 'datetime'
+                };
+
+                // Get the data type for the property
+                const dataType = dataTypeMapping[property.datatype];
+
+                // Convert the property value to the appropriate data type
+                let value = $(`#${schema.id}_${property.name}`).val() ?? '';
+                switch (dataType) {
+                    case 'boolean':
+                        value = Boolean(value) ?? '';
+                        break;
+                    case 'number':
+                        value = Number(value) ?? '';
+                        break;
+                    default:
+                        value = value ?? '';
                 }
+
+                // Add the property to the result JSON
+                result[property.name] = value;
             });
-            $('#SchemaProperties').append('</div>');
-            $('.' + parentList).hide();
+            return result;
         }
-
-        function toggleClass(className) {
-            if ($('.' + className).css('display') == 'none')
-                $('.' + className).show();
-            else
-                $('.' + className).hide();
-        }
-
-        var mySavedCookie = [];
 
         function saveClientSchemas() {
             mySavedCookie = [];
@@ -233,41 +360,6 @@
             showSchemasWithData()
         }
 
-
-        function showSchemasWithData() {
-
-            var fullschemas = printJSONProperties(masterType, masterType.name);
-
-            var fullSchemaDiv = `
-                                     <div class="section-body contain-lg clients_read">
-
-                                                <div class="box box-default users_read">
-                                                    <div class="box-header style-standard">
-                                                        JSON-LD View
-                                                    </div>
-                                                    <div class="box-body style-default-bright form">
-                                                        <pre class="  prettyprint  ">
-                                                        <ol class="linenums">
-
-                                                        <li><span class="tagc">&lt;script</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"application/ld+json"</span><span class="tagc">&gt;</span><span class="pln"></span></li>
-                                                        <li><span class="pln"></span><span class="pun">{</span><span class="pln"></span></li>
-                                                        <li><span class="pln">&nbsp; </span><span class="str">"@@context"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"https://schema.org"</span><span class="pun">,</span><span class="pln"></span></li>
-                                                   ` + fullschemas + `
-                                                        <li><span class="pln"></span><span class="pun">}</span><span class="pln"></span></li>
-                                                        <li><span class="pln"></span><span class="tagc">&lt;/script&gt;</span></li>
-                                                        </ol></pre>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                    `;
-
-
-            $('#FullSchemaProperties').html(fullSchemaDiv)
-        }
-
-
         function spaces(count) {
             var line = "&nbsp; ";
             for (var i = 0; i < count; i++) {
@@ -276,69 +368,10 @@
             return line;
         }
 
-
-
-        function printJSONProperties(xschema, parentList) {
-            if (xschema == null)
-                return "";
-
-            var line = "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"@@type\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + xschema.name + "\"</span><span class='pun'>,</span><span class='pln'></span></li>";
-
-
-            if (xschema.properties != null && xschema.properties.length > 0) {
-                xschema.properties.forEach(p => {
-                    if (p.visible) {
-                        if (p.datatype == 4) {
-
-                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='pun'>{</span><span class='pln'></span></li>";
-                            depth += 1;
-                            line += printJSONProperties(p.schemaDataType, (parentList == null ? '' : parentList + '_') + p.name) + "<li class='L8'><span class='pln'>" + spaces(depth) + " </span>";
-                            var comma = ",";
-                            if (p == xschema.properties.findLast(x => x != null && x.visible == true)) {
-                                comma = "";
-                            }
-                            line += "<span class='pun'>}" + comma + "</span><span class='pln'></span></li>";
-                            depth -= 1;
-                        }
-                        else {
-                            var comma = ",";
-                            var savedCookie = mySavedCookie.find(x => x.id == parentList + '_' + p.name + '_1')
-                            var value = savedCookie == null ? "-No Data-" : savedCookie.value;
-
-                            if (p == xschema.properties.findLast(x => x != null && x.visible == true)) {
-                                comma = "";
-                            }
-                            if (p.datatype == 0) {
-                                line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + value + "\"</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-                            }
-                            if (p.datatype == 1) //Datatype._bool)
-                            {
-                                line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>" + value + "</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-                            }
-                            if (p.datatype == 3) //Datatype._date)
-                            {
-                                line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + value + "\"</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-
-                            }
-                            if (p.datatype == 2) //Datatype._number)
-                            {
-                                line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>" + value + "</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-                            }
-                        }
-                    }
-                }
-
-                );
-            }
-            else {
-                line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='atn'>\"MISSING PROPERTIES\"</span></li>";
-            }
-
-
-            return line;
-
-        }
-
-
     </script>
+}
+
+@section css
+    {
+    <link type="text/css" rel="stylesheet" href="~/lib/json-viwer/jquery.json-viewer.css" />
 }

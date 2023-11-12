@@ -17,6 +17,7 @@
         public bool? active { get; set; }
         public Guid? clientId { get; set; }
         public string? name { get; set; }
+        public string? nameLike { get; set; }
         public Guid? parentId { get; set; }
         public bool? includeSubCategory { get; set; }
         public bool? showNoParents { get; set; }
@@ -37,6 +38,8 @@
                     f += "&clientId=" + clientId.Value;
                 if (!string.IsNullOrEmpty(name))
                     f += "&name=" + name;
+                if (!string.IsNullOrEmpty(nameLike))
+                    f += "&nameLike=" + nameLike;
                 if (parentId.HasValue)
                     f += "&parentId=" + parentId.Value;
                 if (showNoParents.HasValue)

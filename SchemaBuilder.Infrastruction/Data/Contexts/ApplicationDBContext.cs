@@ -233,6 +233,13 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                     schemaId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
                 };
                 WebsiteGroupSchemas.Add(websiteGroupSchema);
+                var websiteGroupSchema1 = new WebsiteGroupSchema
+                {
+                    id = Guid.Parse("3fa85f64-5555-4562-b3fc-2c963f66afa9"),
+                    groupName = "Coffes",
+                    schemaId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa7"),
+                };
+                WebsiteGroupSchemas.Add(websiteGroupSchema1);
             }
             // Add other categories and data as needed
 

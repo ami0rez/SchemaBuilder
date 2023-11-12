@@ -9901,7 +9901,7 @@ img.stretchy {
 
 
 .tab-pane {
-    background-color: #f5f5f5;
+    border: solid thin #dddddd;
     padding: 20px;
 }
 

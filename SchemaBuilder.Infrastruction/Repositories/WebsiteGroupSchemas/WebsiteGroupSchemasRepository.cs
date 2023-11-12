@@ -18,11 +18,14 @@ namespace SchemaBuilder.Infrastruction.Repositories.WebsiteGroupSchemas
 
         private IQueryable<WebsiteGroupSchema> getQuery(WebsiteGroupSchemaFilter filter)
         {
-
+            var listofGroupNames = filter.groupNameList?.Split(',');
             var query = _context.WebsiteGroupSchemas.Where(e => (
                     e.id == (filter.id.HasValue ? filter.id.Value : e.id) &&
-                    e.groupName == (string.IsNullOrEmpty(filter.groupName) ? e.groupName : filter.groupName)
-                    ));
+                    e.groupName == (string.IsNullOrEmpty(filter.groupName) ? e.groupName : filter.groupName) &&
+                    (listofGroupNames == null
+                    || !listofGroupNames.Any()
+                    || listofGroupNames.Contains(e.groupName)
+                    )));
 
             return query;
 
