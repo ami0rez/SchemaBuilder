@@ -7,71 +7,6 @@
 }
 
 
-<style>
-    /* Pretty printing styles. Used with prettify.js. */
-
-    .str {
-        color: #080;
-    }
-
-    .kwd {
-        color: #008;
-    }
-
-    .com {
-        color: #800;
-    }
-
-    .typ {
-        color: #606;
-    }
-
-    .lit {
-        color: #066;
-    }
-
-    .pun {
-        color: #660;
-    }
-
-    .pln {
-        color: #000;
-    }
-
-    .tagc {
-        color: #008;
-    }
-
-    .atn {
-        color: #900;
-    }
-
-    .atv {
-        color: #080;
-    }
-
-    .dec {
-        color: #606;
-    }
-
-    pre.prettyprint {
-        padding: 5px;
-        border: 1px solid #CCC;
-        background: #EFEFEF;
-    }
-
-        pre.prettyprint ol li:hover {
-            background: #DFDFDF;
-        }
-
-    /* Specify class=linenums on a pre to get line numbering */
-    ol.linenums {
-        margin: 0; /* IE indents via margin-left */
-        padding: 0;
-        list-style-type: none;
-    }
-</style>
-
 <section class="container-fluid container-mw-xxl chapter">
     <div class="section-header">
         <ol class="breadcrumb">
@@ -80,207 +15,248 @@
         </ol>
     </div>
 
-<div class="section-body contain-lg">
+    <div class="section-body contain-lg">
 
-    <div class="form" role="form">
-        <div class="row">
-            <div class="col-md-9">
-                <div class="box box-default users_read">
-                    <div class="box-header style-standard">
-                        Select Schema
+        <div class="form" role="form">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="box box-default users_read">
+                        <div class="box-header style-standard">
+                            Select Schema
+                        </div>
+                        <div class="box-body style-default-bright form">
+                            <input id="schemaId" type="text" class="form-control rounded-right" />
+                        </div>
                     </div>
-                    <div class="box-body style-default-bright form">
-                        <select class="form-control rounded-right" placeholder="Select" id="schemaId"  name="productId" onchange="updateSelectedCategories"></select>
+                    <div class="box box-default users_read">
+                        <div class="box-header style-standard">
+                            JSON-LD View
+                        </div>
+                        <div class="box-body style-default-bright form">
+                            <div class="col-md-12" id="schemaContainer" style=" border: solid thin #333; border-radius: 5px; margin: 0; background-color: #fff; position: relative; display:none;">
+                                <pre id="jsonviewer" class="col-md-12"></pre>
+                                <span style=" position: absolute; top: 10px; right: 10px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; width: 30px; height: 30px; font-size: 1.3em; display: flex; justify-content: center; align-items: center; cursor: pointer; ">
+                                    <i class="fa fa-copy icon" data-icon="fa fa-copy" onclick="copySchemaJsonLD()"></i>
+                                </span>
+                            </div>
+
+                            <div class="container" id="noCategoryContainer">
+                                <h5>Select a Schema to view Json-ld Representation</h5>
+                            </div>
+                        </div>
+
                     </div>
+
+                    <div class="box box-default users_read">
+                        <div class="box-header style-standard">
+                            Hierachy View
+                        </div>
+                        <div class="box-body style-default-bright form">
+                            <div id="hirearchy" style="display:none;">
+                            </div>
+                            <div class="container" id="noHirearchyContainer">
+                                <h5>Select a Schema to view hirearchy representation</h5>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="box box-default users_read">
-                    <div class="box-header style-standard">
-                        JSON-LD View
-                    </div>
-                    <div class="box-body style-default-bright form">
-                         <pre class="  prettyprint  ">
-                            <ol class="linenums">
-
-                            <li><span class="tagc">&lt;script</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"application/ld+json"</span><span class="tagc">&gt;</span><span class="pln"></span></li>
-                            <li><span class="pln"></span><span class="pun">{</span><span class="pln"></span></li>
-                            <li id="preContent"><span class="pln">&nbsp; </span><span class="str">"@@context"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"https://schema.org"</span><span class="pun">,</span><span class="pln"></span></li>
-                            <li><span class="pln"></span><span class="pun">}</span><span class="pln"></span></li>
-                            <li><span class="pln"></span><span class="tagc">&lt;/script&gt;</span></li>
-                            </ol>
-                        </pre>
-                    </div>
-                </div>
-
-                <div class="box box-default users_read">
-                    <div class="box-header style-standard">
-                         Hierachy View
-                    </div>
-                    <div class="box-body style-default-bright form" id="hirearchy">
-                    </div>
-                </div>
-
             </div>
         </div>
-    </div>
     </div>
 </section>
 
 @section scripts
     {
     <script src="~/js/libs/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/lib/json-viwer/jquery.json-viewer.js"></script>
 }
+
 @section DemoScripts
     {
     <script>
 
         var Datatype = {
-            @foreach (var type in Enum.GetValues(typeof(Datatype)))
-            {
-                @: '@Enum.GetName(typeof(Datatype), type)': @((int)type),
-            }
-        };
+        @foreach (var type in Enum.GetValues(typeof(Datatype)))
+        {
+            @: '@Enum.GetName(typeof(Datatype), type)': @((int)type),
+        }
+                                };
 
         var DatatypeDescription = [
-            @foreach (Datatype type in Enum.GetValues(typeof(Datatype)))
-            {
-                @: '@(type.GetDescription())',
-            }
-        ];
+        @foreach (Datatype type in Enum.GetValues(typeof(Datatype)))
+        {
+            @: '@(type.GetDescription())',
+        }
+                                ];
 
         var categories = [];
         var sections = [];
         var websiteGroupSchema = [];
         var categoryGroup = [];
         var schemas = [];
+        var selectedSchemaId = '';
         var Properties = [];
 
 
         (async () => {
-            var mySchemaPromise = getPromiseData("Schema", "showLevel1Properties=true");
-            await loadPromise(mySchemaPromise, "schemas");
-            
-            addSchemasToDropdown();
-
-            if(schemas && schemas.length){
-                printJSONProperties(schemas[0])
-                printSchemaProperties(schemas[0])
-            }
+            intializeAutocomplete();
         })();
 
-        function addSchemasToDropdown() {
-            schemas.forEach(category => {
-                $(`#schemaId`).append(`<option value='${category.id}'>${category.name}</option>`);
-            })
+        function intializeAutocomplete() {
+            $("#schemaId").autocomplete({
+                source: async function (request, response) {
+                    var mySchemaPromise = getPromiseData("Schema", "showLevel1Properties=true&name=" + request.term);
+                    await loadPromise(mySchemaPromise, "schemas");
+                    if (!schemas || !schemas.length) {
+                        toastr.error(`No schema found with name containing '${request.term}'`)
+                        return;
+                    }
+                    var schemasData = schemas.map((categ) => ({
+                        label: categ.name,
+                        value: categ.id
+                    }));
+                    response(schemasData);
+                },
+                select: async function (event, ui) {
+                    event.preventDefault();
+                    $("#schemaId").val(ui.item.label);
+                    selectedSchemaId = ui.item.value;
+                    refreshSelectedSchema(ui.item.value)
+                },
+            });
         }
 
-        function updateSelectedCategories() {
+        function generateJSONObject(schema) {
+            let result = {
+
+                "@@type": schema.name
+            };
+            var properties = schema.properties;
+            properties.forEach(property => {
+                // Get the data type for the property
+                const dataType = DatatypeDescription[property.datatype];
+
+                // Convert the property value to the appropriate data type
+                let value = $(`#${schema.id}_${property.name}`).val() ?? '';
+                switch (property.datatype) {
+                    case Datatype.boolean:
+                        value = true;
+                        break;
+                    case Datatype.date:
+                        value = new Date();
+                        break;
+                    case Datatype.number:
+                        value = 1;
+                        break;
+                    default:
+                        value = 'Some Value of type ' + DatatypeDescription[property.datatype];
+                }
+
+                // Add the property to the result JSON
+                result[property.name] = value;
+            });
+            return result;
         }
 
-        function printSchemaProperties(schema)
-        {
+        function renderJson(input) {
+            var options = {
+                collapsed: false,
+                rootCollapsable: false,
+                withQuotes: false,
+                withLinks: true,
+                footer: '<span><</span>/script<span>></span>',
+                header: '<span><</span>script type="application/ld+json"<span>></span>'
+            };
+            $(`#jsonviewer`).jsonViewer(input, options);
+        }
+
+
+        function showSchemasWithData(schema) {
+            var fullschemas = generateJSONObject(schema);
+            renderJson(fullschemas);
+        }
+
+
+        function refreshSelectedSchema(categoryId) {
+            if (categoryId) {
+                $("#schemaContainer").show();
+                $("#hirearchy").show();
+                $("#noCategoryContainer").hide();
+                $("#noHirearchyContainer").hide();
+            } else {
+                $("#schemaContainer").hide();
+                $("#hirearchy").hide();
+                $("#noCategoryContainer").show();
+                $("#noHirearchyContainer").show();
+                return;
+            }
+
+            if (schemas && schemas.length) {
+                showSchemasWithData(schemas[0])
+                printSchemaProperties(schemas[0])
+            }
+        }
+
+        function copySchemaJsonLD() {
+            var mySchemData = schemas.find(schema => schema.id == selectedSchemaId);
+            var schemaObject = generateJSONObject(mySchemData, {});
+
+            var jsonString = JSON.stringify(schemaObject, null, 2);
+            jsonString = `<script type="application/ld+json">\n${jsonString}\n<\/script>`
+
+            // Create a temporary textarea to copy the text to the clipboard
+            var textarea = document.createElement('textarea');
+            textarea.value = jsonString;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+
+            // Append the textarea to the body
+            document.body.appendChild(textarea);
+
+            // Select the text in the textarea
+            textarea.select();
+            textarea.setSelectionRange(0, jsonString.length);
+
+            // Copy the selected text to the clipboard
+            document.execCommand('copy');
+
+            // Remove the textarea from the DOM
+            document.body.removeChild(textarea);
+            toastr.success('Json Schema copied successfully')
+        }
+
+
+        function printSchemaProperties(schema) {
             if (schema == null)
                 return "";
             var line = schema.name + "<br><ul>";
 
 
-            if (schema.properties != null && schema.properties.length > 0)
-            {
+            if (schema.properties != null && schema.properties.length > 0) {
                 schema.properties.forEach(function (p, index) {
-                    if (p.datatype == Datatype.schema)
-                    {
+                    if (p.datatype == Datatype.schema) {
                         line += "<li>" + p.name + ", Type: " + printSchemaProperties(p.schemaDataType) + "</li>";
                         //    line += "<li>" + p.name + ", Type: " + p.schemaDataType.name + "</li>";
                     }
-                    else
-                    {
+                    else {
                         line += "<li>" + p.name + ", Type: " + DatatypeDescription[p.datatype] + "</li>";
                     }
                 })
             }
-            else
-            {
+            else {
                 line += "<li ><span class='atn'>\"MISSING PROPERTIES\"</span></li>";
             }
 
             line += "</ul>";
             $('#hirearchy').html(line)
         }
-        var depth = 0;
 
 
-        function spaces(count)
-        {
-            var line = "&nbsp; ";
-            for (var i = 0; i < count; i++)
-            {
-                line += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-            }
-            return line;
-        }
-
-        function printJSONProperties(schema)
-        {
-           if (schema == null)
-                return "";
-
-            var line = "";
-            var line = "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"@*type*@\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + schema.name + "\"</span><span class='pun'>,</span><span class='pln'></span></li>";
-       
-
-            if (schema.properties != null && schema.properties.length > 0)
-            {
-                schema.properties.forEach(function(p, index) {
-                    if (p.datatype == Datatype.schema)
-                    {
-
-                        line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='pun'>{</span><span class='pln'></span></li>";
-                        depth += 1;
-                        line += printJSONProperties(p.schemaDataType) + "<li class='L8'><span class='pln'>" + spaces(depth) + " </span>";
-                        var comma = ",";
-                        if (p == schema.properties[schema.properties.length - 1])
-                        {
-                            comma = "";
-                        }
-                        line += "<span class='pun'>}" + comma + "</span><span class='pln'></span></li>";
-                        depth -= 1;
-                    }
-                    else
-                    {
-                        var comma = ",";
-                        if (p == schema.properties[schema.properties.length - 1])
-                        {
-                            comma = "";
-                        }
-                        if (p.datatype == Datatype.text)
-                        {
-                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"Some Value of type " + DatatypeDescription[p.datatype] + "\"</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-                        }
-                        if (p.datatype == Datatype.bool)
-                        {
-                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>true</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-                        }
-                        if (p.datatype == Datatype.date)
-                        {
-                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>\"" + DateTime.Today + "\"</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-
-                        }
-                        if (p.datatype == Datatype.number)
-                        {
-                            line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='str'>\"" + p.name + "\"</span><span class='pun'>:</span><span class='pln'> </span><span class='str'>1</span><span class='pun'>" + comma + "</span><span class='pln'></span></li>";
-                        }
-
-
-                    }
-                });
-            }
-            else
-            {
-                line += "<li ><span class='pln'>" + spaces(depth) + " </span><span class='atn'>\"MISSING PROPERTIES\"</span></li>";
-            }
-            $('#preContent').after(line);
-        }
-
-
-
-</script>
+    </script>
+}
+@section css
+    {
+    <link type="text/css" rel="stylesheet" href="~/lib/json-viwer/jquery.json-viewer.css" />
 }

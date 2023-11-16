@@ -40,10 +40,6 @@
                             <div class="container" id="noCategoryContainer">
                                 <h5>Select a Category to start editing</h5>
                             </div>
-
-                            <div id="FullSchemaProperties"></div>
-                            <pre id="json-renderer"></pre>
-                            <div id="jsonld-container"></div>
                         </div>
 
 
@@ -88,7 +84,6 @@
 
         (async () => {
             intializeAutocomplete();
-            renderJson();
         })();
 
         async function loadCategoryData(categoryId) {
@@ -119,9 +114,13 @@
                 source: async function (request, response) {
                     var myPromise = getPromiseData("Category", "name=" + request.term);
                     await loadPromise(myPromise, "categories");
+                    if (!categories || !categories.length) {
+                        toastr.error(`No Category found with name containing '${request.term}'`)
+                        return;
+                    }
                     var categoriesData = categories.map((categ) => ({
-                        label: categ.name, // Displayed in the dropdown
-                        value: categ.id // The value to use when selected
+                        label: categ.name,
+                        value: categ.id
                     }));
                     response(categoriesData);
                 },

@@ -50,6 +50,7 @@ namespace SchemaBuilder.Infrastruction.Repositories
                     || !listOfGuids.Any()
                     || listOfGuids.Contains(e.id)
                     ) &&
+                    ((!string.IsNullOrEmpty(filter.name) && e.name.ToLower().Contains(filter.name.ToLower())) || string.IsNullOrEmpty(filter.name)) &&
                     e.parentId == (filter.parentId.HasValue ? (filter.parentId.Value) : ((filter.showNoParents.HasValue ? (filter.showNoParents.Value ? null : e.parentId) : e.parentId))) &&
                     e.master == (filter.master.HasValue ? filter.master.Value : e.master)
                     ));

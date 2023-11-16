@@ -86,10 +86,12 @@
     } else if (typeof json === 'object') {
       // Optional support different libraries for big numbers
       // json.isLosslessNumber: package lossless-json
-      // json.toExponential(): packages bignumber.js, big.js, decimal.js, decimal.js-light, others?
-      if (options.bigNumbers && (typeof json.toExponential === 'function' || json.isLosslessNumber)) {
-        html += '<span class="json-literal">' + json.toString() + '</span>';
-      } else {
+        // json.toExponential(): packages bignumber.js, big.js, decimal.js, decimal.js-light, others?
+        if (json instanceof Date) {
+            html += '<span class="json-date">"' + json.toISOString() + '"</span>';
+        } else if(options.bigNumbers && (typeof json.toExponential === 'function' || json.isLosslessNumber)) {
+            html += '<span class="json-literal">' + json.toString() + '</span>';
+        } else {
         var keyCount = Object.keys(json).length;
         if (keyCount > 0) {
           html += '{<ul class="json-dict">';

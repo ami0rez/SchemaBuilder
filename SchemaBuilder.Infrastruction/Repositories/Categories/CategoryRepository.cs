@@ -33,7 +33,7 @@ namespace SchemaBuilder.Infrastruction.Repositories.Categories
                 .Where(e => (
                     e.id == (filter.id.HasValue ? filter.id.Value : e.id)
                     &&
-                      ((!string.IsNullOrEmpty(filter.name)) && (e.name.ToLower().Contains(filter.name.ToLower())) || (filter.name == null) == true) &&
+                      ((!string.IsNullOrEmpty(filter.name) && e.name.ToLower().Contains(filter.name.ToLower())) || string.IsNullOrEmpty(filter.name)) &&
                       ((subcategory && subs.Contains(e.id)) ||
                        (e.parentId == (filter.parentId.HasValue ? filter.parentId.Value : e.parentId) || e.id == (filter.parentId.HasValue ? filter.parentId.Value : e.parentId))
                       ) &&

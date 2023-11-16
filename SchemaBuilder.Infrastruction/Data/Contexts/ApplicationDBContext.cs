@@ -8,7 +8,7 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
     {
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> opt) : base(opt)
         {
-            SeedData();
+            //SeedData();
         }
 
         public DbSet<Schema> Schemas { get; set; }
@@ -153,7 +153,7 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                         {
                             name = "lastName",
                             friendlyName = "Last Name",
-                            datatype = 0,
+                            datatype = SlickyCommonLibrary.Enums.Datatype.boolean,
                             schemaDataTypeId = 0,
                             visible = true
                         },
@@ -161,7 +161,7 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                         {
                             name = "email",
                             friendlyName = "E-mail",
-                            datatype = 0,
+                            datatype = SlickyCommonLibrary.Enums.Datatype.number,
                             schemaDataTypeId = 0,
                             visible = true
                         },
@@ -169,7 +169,7 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                         {
                             name = "username",
                             friendlyName = "User Name",
-                            datatype = 0,
+                            datatype = SlickyCommonLibrary.Enums.Datatype.date,
                             schemaDataTypeId = 0,
                             visible = true
                         }
@@ -198,7 +198,7 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                         {
                             name = "country",
                             friendlyName = "Country",
-                            datatype = 0,
+                            datatype = SlickyCommonLibrary.Enums.Datatype.boolean,
                             schemaDataTypeId = 0,
                             visible = true
                         },
@@ -206,7 +206,7 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                         {
                             name = "zip",
                             friendlyName = "Zip Code",
-                            datatype = 0,
+                            datatype = SlickyCommonLibrary.Enums.Datatype.number,
                             schemaDataTypeId = 0,
                             visible = true
                         },
@@ -214,7 +214,7 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
                         {
                             name = "street",
                             friendlyName = "Street",
-                            datatype = 0,
+                            datatype = SlickyCommonLibrary.Enums.Datatype.date,
                             schemaDataTypeId = 0,
                             visible = true
                         }

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchemaBuilder.Infrastruction.Data.Models
 {
+    [Table("category")]
     public class Category
     {
         [Key]

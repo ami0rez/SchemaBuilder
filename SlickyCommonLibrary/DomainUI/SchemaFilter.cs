@@ -15,6 +15,7 @@
         }
         public Guid? id { get; set; }
         public string? idList { get; set; }
+        public string? name { get; set; }
         public bool? showNoParents { get; set; }
         public Guid? parentId { get; set; }
         public bool? master { get; set; }
@@ -32,6 +33,9 @@
 
                 if (string.IsNullOrEmpty(idList))
                     f += "&idList=" + idList;
+
+                if (string.IsNullOrEmpty(name))
+                    f += "&name=" + name;
 
                 if (parentId.HasValue)
                     f += "&parentId=" + parentId.Value;

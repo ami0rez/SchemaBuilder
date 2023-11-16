@@ -17,7 +17,10 @@ ul.json-dict, ol.json-array {
   color: #1A01CC;
   font-weight: bold;
 }
-
+.json-date {
+    color: #FF5733; /* Choose a color for JSON dates */
+    /* You can also customize other styles for JSON dates if needed */
+}
 /* Toggle button */
 a.json-toggle {
   position: relative;

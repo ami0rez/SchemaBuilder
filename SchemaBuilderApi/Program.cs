@@ -13,6 +13,14 @@ using SchemaBuilder.Infrastruction.Repositories.WebsiteSections;
 
 var builder = WebApplication.CreateBuilder(args);
 
+IConfiguration configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+string connectionString = configuration.GetConnectionString("DefaultConnection");
+
+
 // Add services to the container.
 builder.Services.AddControllers()
             .AddNewtonsoftJson(options =>
@@ -27,7 +35,7 @@ var originName = "CorsPolicy";
 
 builder.Services.AddDbContext<ApplicationDBContext>(opt =>
 {
-    opt.UseInMemoryDatabase("FakeDB");
+    opt.UseSqlServer(connectionString);
 });
 
 builder.Services.AddScoped<ISchemaRepository, SchemaRepository>();
