@@ -29,14 +29,14 @@ namespace SchemaBuilder.Infrastruction.Repositories
                 schemasQuery = schemasQuery.Include(query => query.properties).AsQueryable();
             }
 
-            var listOfGuids = new List<Guid>();
+            var listOfGuids = new List<int>();
             var listOfIds = filter.idList?.Split(',');
 
             if (listOfIds != null)
             {
                 foreach (var item in listOfIds)
                 {
-                    if (Guid.TryParse(item, out Guid parsedId))
+                    if (int.TryParse(item, out int parsedId))
                     {
                         listOfGuids.Add(parsedId);
                     }
@@ -51,8 +51,8 @@ namespace SchemaBuilder.Infrastruction.Repositories
                     || listOfGuids.Contains(e.id)
                     ) &&
                     ((!string.IsNullOrEmpty(filter.name) && e.name.ToLower().Contains(filter.name.ToLower())) || string.IsNullOrEmpty(filter.name)) &&
-                    e.parentId == (filter.parentId.HasValue ? (filter.parentId.Value) : ((filter.showNoParents.HasValue ? (filter.showNoParents.Value ? null : e.parentId) : e.parentId))) &&
-                    e.master == (filter.master.HasValue ? filter.master.Value : e.master)
+                    e.parentId == (filter.parentId.HasValue ? (filter.parentId.Value) : ((filter.showNoParents.HasValue ? (filter.showNoParents.Value ? null : e.parentId) : e.parentId)))
+                    //e.master == (filter.master.HasValue ? filter.master.Value : e.master)
                     ));
         }
 
@@ -117,7 +117,7 @@ namespace SchemaBuilder.Infrastruction.Repositories
             if (c.Any() && c.Count() == 1 && (!filter.showLevel1Properties.HasValue || (filter.showLevel1Properties.HasValue && !filter.showLevel1Properties.Value)))
             {
                 if (schemaIds == null)
-                    schemaIds = new List<Guid>();
+                    schemaIds = new List<int>();
                 schemaIds.Add(c.First().id);
                 await getAllSchema(c.First());
                 schemaIds.Remove(c.First().id);
@@ -126,14 +126,14 @@ namespace SchemaBuilder.Infrastruction.Repositories
             return c;
         }
 
-        private List<Guid> schemaIds;
+        private List<int> schemaIds;
         public async Task getAllSchema(Schema parent)
         {
             if (parent.properties.Any(x => x.datatype == Datatype.schema))
             {
                 foreach (var propertyDto in parent.properties.Where(x => x.datatype == Datatype.schema))
                 {
-                    if (!schemaIds.Contains(propertyDto.schemaId.HasValue? propertyDto.schemaId.Value : Guid.Empty))
+                    if (!schemaIds.Contains(propertyDto.schemaId.HasValue? propertyDto.schemaId.Value : 0))
                     {
                         var schemas = await GetDto(new SchemaFilter() { id = propertyDto.schemaId});
                         if (schemas.Any())
@@ -152,7 +152,7 @@ namespace SchemaBuilder.Infrastruction.Repositories
             {
                 foreach (var propertyDto in parent.properties.Where(x => x.datatype == Datatype.schema))
                 {
-                    if (!schemaIds.Contains(propertyDto.schemaId.HasValue ? propertyDto.schemaId.Value : Guid.Empty))
+                    if (!schemaIds.Contains(propertyDto.schemaId.HasValue ? propertyDto.schemaId.Value : 0))
                     {
                         var schemas = await GetDto(new SchemaFilter() { id = propertyDto.schemaId });
                         if (schemas.Any())
@@ -196,7 +196,7 @@ namespace SchemaBuilder.Infrastruction.Repositories
             _context.Entry(c).State = EntityState.Modified;
             await save(_context);
         }
-        public async Task Delete(Guid SchemaId)
+        public async Task Delete(int SchemaId)
         {
 
             var c = await _context.Schemas.Where(e => e.id == SchemaId).FirstOrDefaultAsync();

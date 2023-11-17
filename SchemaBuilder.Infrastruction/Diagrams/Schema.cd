@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SchemaBuilder.Infrastruction.Data.Models.WebsiteGroupSchema">
+    <Position X="6.5" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAAAAAAAgBAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Data\Models\WebsiteGroupSchema.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="schema" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SchemaBuilder.Infrastruction.Data.Models.Schema">
+    <Position X="10" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAIAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Data\Models\Schema.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SchemaBuilder.Infrastruction.Data.Models.Category">
+    <Position X="3.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAQAAAIAAAAAAAAAAACABAABAAAEAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Data\Models\Category.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SchemaBuilder.Infrastruction.Data.Models.SchemaProperty">
+    <Position X="10" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAIAAAAAkBBAAAAAACAAAAgA=</HashCode>
+      <FileName>Data\Models\SchemaProperty.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="schema" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SchemaBuilder.Infrastruction.Data.Models.WebsiteSection">
+    <Position X="7" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAgAAIAAAAAAAAAAEAAAAAAAIAAAAAgA=</HashCode>
+      <FileName>Data\Models\WebsiteSection.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="category" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

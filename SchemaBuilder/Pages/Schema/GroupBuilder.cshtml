@@ -158,7 +158,7 @@
         }
 
         function filterSchemas() {
-            masterSchemas = schemas.filter(mySchema => mySchema.master)
+            masterSchemas = schemas.filter(mySchema => !mySchema.parentId)
         }
 
         function addNewHtmlTab(tabIndex, name, content) {

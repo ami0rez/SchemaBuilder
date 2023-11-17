@@ -6,7 +6,7 @@ namespace SchemaBuilder.Infrastruction.Repositories
     public interface ISchemaRepository
     {
         Task Add(Schema c);
-        Task Delete(Guid SchemaId);
+        Task Delete(int SchemaId);
         Task Delete(Schema c);
         Task Edit(Schema c);
         Task Edit(SchemaProperty c);

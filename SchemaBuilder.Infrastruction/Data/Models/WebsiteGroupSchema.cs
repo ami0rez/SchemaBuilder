@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchemaBuilder.Infrastruction.Data.Models
 {
+    [Table("WebsiteGroupSchema")]
     public class WebsiteGroupSchema
     {
         [Key]
@@ -15,7 +11,8 @@ namespace SchemaBuilder.Infrastruction.Data.Models
         public Guid id { get; set; }
         public string groupName { get; set; } = "";
 
-        public Guid schemaId { get; set; }
+        public bool visible { get; set; }
+        public int schemaId { get; set; }
         public Schema? schema { get; set; }
     }
 }

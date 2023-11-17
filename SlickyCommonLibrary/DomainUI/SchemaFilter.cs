@@ -13,11 +13,11 @@
         public SchemaFilter()
         {
         }
-        public Guid? id { get; set; }
+        public int? id { get; set; }
         public string? idList { get; set; }
         public string? name { get; set; }
         public bool? showNoParents { get; set; }
-        public Guid? parentId { get; set; }
+        public int? parentId { get; set; }
         public bool? master { get; set; }
 
         public bool? showLevel1Properties { get; set; }

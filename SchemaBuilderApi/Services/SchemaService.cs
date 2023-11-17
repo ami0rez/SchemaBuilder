@@ -43,7 +43,7 @@ namespace SchemaBuilder.Api.Services
             await _schemaRepository.Edit(c);
         }
 
-        public async Task Delete(Guid c)
+        public async Task Delete(int c)
         {
             await _schemaRepository.Delete(c);
         }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchemaBuilder.Infrastruction.Data.Models
 {
+    [Table("SchemaProperty")]
     public class SchemaProperty
     {
         [Key]
@@ -13,7 +14,7 @@ namespace SchemaBuilder.Infrastruction.Data.Models
         public string? friendlyName { get; set; }
 
         [ForeignKey("schema")]
-        public Guid? schemaId { get; set; }
+        public int? schemaId { get; set; }
         public virtual Schema? schema { get; set; }
 
         public Datatype datatype { get; set; }
