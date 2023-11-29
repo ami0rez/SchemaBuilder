@@ -1,0 +1,267 @@
+﻿@page
+@using SlickyCommonLibrary.DomainUI;
+@using SlickyCommonLibrary.Enums;
+
+@model SchemaBuilder.Pages.Customer.CustomerInfoModel
+@{
+    ViewBag.subtitle = "access_customer";
+    ViewBag.title = "access";
+}
+
+<section class="container-fluid container-mw-xxl chapter">
+    <div class="section-header">
+        <ol class="breadcrumb">
+            <li>Schema </li>
+            <li class="">Integration</li>
+        </ol>
+    </div>
+
+    <div class="section-body contain-lg">
+
+        <div class="form" role="form">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="box box-default users_read">
+                        <div class="box-header style-standard">
+                            Website Url:
+                        </div>
+                        <div class="box-body style-default-bright form">
+                            <input id="website" type="text" class="form-control rounded-right" />
+                            <div class="d-flex-center-h-start">
+                                <div class="d-flex-grow">
+                                </div>
+                                <button class="ml-3 ant-btn btn-cta btn-primary btn-spinner" onclick="saveGroupSchemas('${groupId}')">Get Info</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box box-default users_read" id="customerInfoContainer" style="display:none;">
+                        <div class="box-header style-standard">
+                            Customer Info
+                        </div>
+                        <div class="box-body style-default-bright form">
+                            <div class="container" id="customerInfo" style="display:none;">
+                                <ul class="nav nav-tabs" id="myTabs">
+                                    <li class="nav-item">
+                                        <a class="nav-link active show" data-toggle="tab" href="#customerInformation">Customer information</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#person">Person</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#services">Services</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#associatedBusiness">Associated business</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#socialMedia">Social media</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#pages">Pages</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active show" id="customerInformation" role="tabpanel">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="g-color-text g-font-size-13">Business name</label>
+                                                    <input onchange="addressBox.currentAddress.label = $(this).val()" class="form-control g-brd-gray-light-v4 g-brd-primary--focus g-color-text rounded g-py-13 g-px-15" type="text" id="addlabel" placeholder="Business Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="g-color-text g-font-size-13">Address</label>
+                                                    <input onchange="addressBox.currentAddress.label = $(this).val()" class="form-control g-brd-gray-light-v4 g-brd-primary--focus g-color-text rounded g-py-13 g-px-15" type="text" id="addlabel" placeholder="Address">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="g-color-text g-font-size-13">Website</label>
+                                                    <input onchange="addressBox.currentAddress.label = $(this).val()" class="form-control g-brd-gray-light-v4 g-brd-primary--focus g-color-text rounded g-py-13 g-px-15" type="text" id="addlabel" placeholder="Website">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="g-color-text g-font-size-13">Owner name</label>
+                                                    <input onchange="addressBox.currentAddress.label = $(this).val()" class="form-control g-brd-gray-light-v4 g-brd-primary--focus g-color-text rounded g-py-13 g-px-15" type="text" id="addlabel" placeholder="Owner name">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="g-color-text g-font-size-13">Phone</label>
+                                                    <input onchange="addressBox.currentAddress.label = $(this).val()" class="form-control g-brd-gray-light-v4 g-brd-primary--focus g-color-text rounded g-py-13 g-px-15" type="text" id="addlabel" placeholder="Phone">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="g-color-text g-font-size-13">Business category id</label>
+                                                    <input onchange="addressBox.currentAddress.label = $(this).val()" class="form-control g-brd-gray-light-v4 g-brd-primary--focus g-color-text rounded g-py-13 g-px-15" type="text" id="addlabel" placeholder="Business category id">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="g-color-text g-font-size-13">Business category name</label>
+                                                    <input onchange="addressBox.currentAddress.label = $(this).val()" class="form-control g-brd-gray-light-v4 g-brd-primary--focus g-color-text rounded g-py-13 g-px-15" type="text" id="addlabel" placeholder="Business category name">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="g-color-text g-font-size-13">Content richness</label>
+                                                    <input onchange="addressBox.currentAddress.label = $(this).val()" class="form-control g-brd-gray-light-v4 g-brd-primary--focus g-color-text rounded g-py-13 g-px-15" type="text" id="addlabel" placeholder="Content richness">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="g-color-text g-font-size-13">Product detected range</label>
+                                                    <input onchange="addressBox.currentAddress.label = $(this).val()" class="form-control g-brd-gray-light-v4 g-brd-primary--focus g-color-text rounded g-py-13 g-px-15" type="text" id="addlabel" placeholder="Product detected range">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="person" role="tabpanel">
+                                        <div id="placeholder_Address"></div>
+                                    </div>
+                                    <div class="tab-pane fade" id="services" role="tabpanel">
+                                        <div id="placeholder_Service"></div>
+                                    </div>
+                                    <div class="tab-pane fade" id="associatedBusiness" role="tabpanel">
+                                        <div id="placeholder_Business"></div>
+                                    </div>
+                                    <div class="tab-pane fade" id="socialMedia" role="tabpanel">
+                                        <div id="placeholder_SocialMedia"></div>
+                                    </div>
+                                    <div class="tab-pane fade" id="pages" role="tabpanel">
+                                        <div id="placeholder_Page"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="container" id="notProceesed" style="display:none;">
+                                <h5 id="notProceesedMessage"></h5>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+                <div class="col-md-3" id="submitContainer">
+                    <div class="box box-default users_read">
+                        <div class="box-body style-default-bright form">
+                            <div class="row g-pb-20">
+                                <div class="col-md-12">
+                                    <button type="button" class="ant-btn btn-cta btn-primary btn-spinner clients_write btn-block" onclick="save();" id="mySubmit">Validate Informations</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts
+    {
+    <script src="~/js/libs/jquery-ui/jquery-ui.min.js"></script>
+
+}
+
+@section DemoScripts
+    {
+    <script>
+
+        var customerInfo = {};
+        var customerInfoId;
+
+        var AddressFields = [
+            { title: 'Name', type: 'text', name: 'name' },
+            { title: 'Position', type: 'text', name: 'position' },
+            { title: 'Address', type: 'text', name: 'address' },
+            { title: 'Title', type: 'text', name: 'title' },
+            { title: 'Phone', type: 'text', name: 'phone' },
+        ];
+
+        var ServiceFields = [
+            { title: 'Name', type: 'text', name: 'name' },
+            { title: 'Price', type: 'text', name: 'price' },
+            { title: 'Description', type: 'text', name: 'description' },
+        ];
+
+        var BusinessFields = [
+            { title: 'Name', type: 'text', name: 'name' },
+            { title: 'Price', type: 'text', name: 'price' },
+            { title: 'Description', type: 'text', name: 'description' },
+        ];
+
+        var SocialMediaFields = [
+            { title: 'Name', type: 'text', name: 'name' },
+            { title: 'Address', type: 'text', name: 'address' },
+        ];
+
+        var PageFields = [
+            { title: 'Name', type: 'text', name: 'name' },
+            { title: 'Description', type: 'text', name: 'description' },
+            { title: 'Category', type: 'text', name: 'category' },
+            { title: 'Type', type: 'text', name: 'type' },
+        ];
+
+        (async () => {
+            loadCustomerData();
+        })();
+
+        async function loadCustomerData(categoryId) {
+            customerInfoId = getId();
+            if (customerInfoId != '') {
+                var customerInfoPromis = getPromiseData("CustomerInfo", "id=" + customerInfoId);
+                await loadPromise(customerInfoPromis, "customerInfo");
+                customerInfo = customerInfo[0];
+            }
+            else {
+                customerInfo.id = e7();
+                customerInfo.status = customerProcessingStatus.processed;
+            }
+            refreshContent()
+            populateSubTable('customerInfo.peopleDetected', 'Address', "AddressFields");
+            populateSubTable('customerInfo.serviceDetected', 'Service', "ServiceFields");
+            populateSubTable('customerInfo.associatedBusinessDetected', 'Business', "BusinessFields");
+            populateSubTable('customerInfo.socialMedia', 'SocialMedia', "SocialMediaFields");
+            populateSubTable('customerInfo.pages', 'Page', "PageFields");
+
+            //loadStandardValues(customerInfo, properties);
+        }
+
+        function refreshContent() {
+            if (customerInfoId) {
+                return;
+            }
+            $('#customerInfoContainer').show();
+
+            if (customerInfo.status == customerProcessingStatus.notProcessed) {
+                $('#notProceesed').show();
+                $('#customerInfo').hide();
+                $('#submitContainer').hide();
+                $('#notProceesedMessage').text('Your request is being processed this make take sometime, you will receive an email once it is ready')
+            }
+            else {
+                $('#notProceesed').hide();
+                $('#customerInfo').show();
+                $('#submitContainer').show();
+                $('#notProceesedMessage').text('Your request is still waiting in the quee')
+            }
+        }
+
+        function isValidURL(url) {
+            var urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+            return urlPattern.test(url);
+        }
+
+    </script>
+}
+
+@section css
+    {
+    <link type="text/css" rel="stylesheet" href="~/lib/json-viwer/jquery.json-viewer.css" />
+}

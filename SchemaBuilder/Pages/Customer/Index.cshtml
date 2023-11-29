@@ -1,0 +1,101 @@
+﻿@page
+@using SlickyCommonLibrary.DomainUI;
+@using SlickyCommonLibrary.Enums;
+
+@model SchemaBuilder.Pages.Customer.IndexModel
+@{
+    ViewBag.subtitle = "access_customer";
+    ViewBag.title = "access";
+}
+
+
+
+<section class="container-fluid container-mw-xxl chapter">
+    <div class="section-header">
+        <ol class="breadcrumb">
+            <li class="">
+                Users and Roles
+            </li>
+            <li class="active">Users</li>
+        </ol>
+    </div>
+    <div class="section-body">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div id="testArea"></div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section scripts
+    {
+    <script src="~/js/slicky_table.js"></script>
+}
+
+@section DemoScripts
+    {
+    <script>
+
+        $(function () {
+            const slickyTable1 = new slickyTable({
+                id: "testArea",
+                url: 'CustomerInfo?1=1',
+                columns: [
+                    {
+                        name: "Website",
+                        data: 'website',
+                        defaultContent: "",
+                        action: "Edit",
+                    },
+                    {
+                        name: "Business name",
+                        data: 'businessName',
+                        defaultContent: "",
+                        action: "Edit"
+                    },
+                    {
+                        name: "Owner",
+                        data: 'ownerName',
+                        defaultContent: "",
+                    },
+                    {
+                        name: "Phone",
+                        data: 'phone',
+                        defaultContent: "",
+                    },
+                    {
+                        name: "Category",
+                        data: 'businessCategoryName',
+                        defaultContent: "",
+                    },
+                    {
+                        name: "Status",
+                        data: 'status',
+                        defaultContent: "",
+                    }
+                ],
+                title: "Customer Info",
+                link: "CustomerInfo",
+                actions: [{ action: "Edit" }, { action: "Delete", modal: true, fieldName: "firstname" }],
+                pageSize: 10,
+                sorts: [
+                    { name: "Website", orderField: "website", orderBy: OrderBy.ascending },
+                    { name: "Status", orderField: "status", orderBy: OrderBy.descending },
+                    { name: "Category", orderField: "businessCategoryName", orderBy: OrderBy.descending },
+                    { name: "Business name", orderField: "businessName", orderBy: OrderBy.ascending }
+                ]
+            }).display();
+        });
+    </script>
+}
+
+
+
+
+@section css
+    {
+    <link type="text/css" rel="stylesheet" href="~/css/theme-default/libs/data-tables/jquery.data-tables.css?1423553989" />
+}

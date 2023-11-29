@@ -3,13 +3,13 @@
   <Class Name="SchemaBuilder.Infrastruction.Data.Models.Customer.CustomerInfo">
     <Position X="5.75" Y="5.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACQAAAAEAIAAAAEAAAKAAAJ0CAAAAAAAAgA=</HashCode>
+      <HashCode>AAQAAAAAACQAAAAEAIAAAAEAAAKAAAJ0CAAAAAAAAgA=</HashCode>
       <FileName>Data\Models\Customer\CustomerInfo.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="socialMedia" />
-      <Property Name="serviceDetected" />
       <Property Name="peopleDetected" />
+      <Property Name="serviceDetected" />
       <Property Name="associatedBusinessDetected" />
       <Property Name="pages" />
     </ShowAsCollectionAssociation>
@@ -53,7 +53,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="SchemaBuilder.Infrastruction.Data.Models.Customer.CustomerAssociatedBusiness">
-    <Position X="8.25" Y="9.75" Width="1.5" />
+    <Position X="8.25" Y="9.75" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAEAAAAAAAQAAAAAgA=</HashCode>
       <FileName>Data\Models\Customer\CustomerAssociatedBusiness.cs</FileName>
