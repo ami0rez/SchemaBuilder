@@ -40,10 +40,10 @@ namespace SchemaBuilder.Utils.Extensions
         /// <returns></returns>
         public static HtmlString EnumAsJsValueDescriptionObject<T>()
         {
-            Dictionary<string, int> enumDictionary = new Dictionary<string, int>();
+            List<string> enumDictionary = new List<string>();
             foreach (var item in Enum.GetValues(typeof(T)))
             {
-                enumDictionary.Add(((Enum)item).GetDescription(), (int)item);
+                enumDictionary.Add(((Enum)item).GetDescription());
             }
             return new HtmlString(JsonConvert.SerializeObject(enumDictionary));
         }

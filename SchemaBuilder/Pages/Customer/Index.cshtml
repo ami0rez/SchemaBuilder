@@ -75,6 +75,31 @@
                         name: "Status",
                         data: 'status',
                         defaultContent: "",
+                        render: (data) => {
+                            let color = '';
+
+                            switch (data) {
+                                case 0: // Pending
+                                    color = 'orange';
+                                    break;
+                                case 1: // Processed
+                                    color = 'green';
+                                    break;
+                                case 2: // Emailed
+                                    color = 'blue';
+                                    break;
+                                case 3: // Validated
+                                    color = 'purple';
+                                    break;
+                                case 4: // Rejected
+                                    color = 'red';
+                                    break;
+                                default:
+                                    color = 'black';
+                                    break;
+                            }
+                            return `<span style="background: ${color};padding: 2px 9px;border-radius: 12px;border: solid thin #33333322;color: white;">${processingStatusDesc[data]}</span>`;
+                        }
                     }
                 ],
                 title: "Customer Info",

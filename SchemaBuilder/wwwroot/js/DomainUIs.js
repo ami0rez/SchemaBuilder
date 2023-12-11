@@ -375,7 +375,7 @@ function genericSave(sourceObject, sourceName, requiredList, executeAfterRequest
         ajaxCall("POST", sourceObject, sourceName, sourceName + " Saved Successfully", sourceName, executeAfterRequest);
     else {
         var id = sourceObject.id;
-        var sourceObject = { "item": sourceObject, "modifiedEntity": modifiedEntity };
+        //var sourceObject = { "item": sourceObject, "modifiedEntity": modifiedEntity };
         console.log(sourceObject);
         ajaxCall("PUT", sourceObject, sourceName + "?id=" + id, sourceName + " Updated Successfully", sourceName, executeAfterRequest);
     }

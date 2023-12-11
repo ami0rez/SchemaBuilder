@@ -4,18 +4,18 @@ using SchemaBuilder.Infrastruction.Data.Models.Customer;
 using SlickyCommonLibrary.DomainUI;
 using System.Linq.Dynamic.Core;
 
-namespace SchemaBuilder.Infrastruction.Repositories.CustomerInfos
+namespace SchemaBuilder.Infrastruction.Repositories.CustomerJsons
 {
-    public class CustomerInfoRepository : CommonRepository, ICustomerInfoRepository
+    public class CustomerJsonRepository : CommonRepository, ICustomerJsonRepository
     {
         private ApplicationDBContext _context = null;
-        public CustomerInfoRepository(ApplicationDBContext dbContext)
+        public CustomerJsonRepository(ApplicationDBContext dbContext)
         {
             _context = dbContext;
         }
 
 
-        private async Task<IQueryable<CustomerInfo>> getCustomerInfoQuery(CustomerInfoFilter filter)
+        private async Task<IQueryable<CustomerJson>> getCustomerJsonQuery(CustomerJsonFilter filter)
         {
             var flagList = new List<string>();
 
@@ -23,33 +23,32 @@ namespace SchemaBuilder.Infrastruction.Repositories.CustomerInfos
 
             var subs = new List<Guid>();
 
-            return _context.Customers
-                .Include(customer => customer.pages)
+            return _context.CustomerJsons
                 .Where(e => (
                     e.id == (filter.id.HasValue ? filter.id.Value : e.id)));
         }
 
 
 
-        public async Task<List<CustomerInfo>> Get(CustomerInfoFilter filter)
+        public async Task<List<CustomerJson>> Get(CustomerJsonFilter filter)
         {
             if (filter != null)
             {
-                var customers = await (await getCustomerInfoQuery(filter)).ToListAsync();
+                var customers = await (await getCustomerJsonQuery(filter)).ToListAsync();
                 return customers;
             }
             else
                 return null;
         }
 
-        public async Task<List<CustomerInfo>> GetDto(CustomerInfoFilter filter)
+        public async Task<List<CustomerJson>> GetDto(CustomerJsonFilter filter)
         {
             if (filter == null)
                 return null;
 
-            IQueryable<CustomerInfo> query = null;
+            IQueryable<CustomerJson> query = null;
 
-            query = (await getCustomerInfoQuery(filter));
+            query = (await getCustomerJsonQuery(filter));
 
             var customers = await query.ToListAsync();
             return customers;
@@ -57,47 +56,47 @@ namespace SchemaBuilder.Infrastruction.Repositories.CustomerInfos
 
         }
 
-        public async Task<int> GetCount(CustomerInfoFilter filter)
+        public async Task<int> GetCount(CustomerJsonFilter filter)
         {
             if (filter != null)
             {
-                return await (await getCustomerInfoQuery(filter)).CountAsync();
+                return await (await getCustomerJsonQuery(filter)).CountAsync();
             }
             else
                 return 0;
         }
 
-        internal async Task AddRange(List<CustomerInfo> a)
+        internal async Task AddRange(List<CustomerJson> a)
         {
             foreach (var c in a)
             {
-                _context.Customers.Add(c);
+                _context.CustomerJsons.Add(c);
                 await save(_context);
             }
         }
-        public async Task Add(CustomerInfo c)
+        public async Task Add(CustomerJson c)
         {
-            _context.Customers.Add(c);
+            _context.CustomerJsons.Add(c);
             await save(_context);
         }
 
-        public async Task Edit(CustomerInfo c)
+        public async Task Edit(CustomerJson c)
         {
             _context.Entry(c).State = EntityState.Modified;
 
             await save(_context);
         }
-        public async Task Delete(Guid CustomerInfoId)
+        public async Task Delete(Guid CustomerJsonId)
         {
 
-            var c = await _context.Customers.Where(e => e.id == CustomerInfoId).FirstOrDefaultAsync();
+            var c = await _context.CustomerJsons.Where(e => e.id == CustomerJsonId).FirstOrDefaultAsync();
             if (c != null)
             {
                 await Delete(c);
             }
             await save(_context);
         }
-        public async Task Delete(CustomerInfo c)
+        public async Task Delete(CustomerJson c)
         {
             _context.Entry(c).State = EntityState.Deleted;
             await save(_context);

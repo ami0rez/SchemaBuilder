@@ -29,4 +29,8 @@
     <ProjectReference Include="..\SchemaBuilder.Infrastruction\SchemaBuilder.Infrastruction.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
+  </ItemGroup>
+
 </Project>

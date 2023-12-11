@@ -9,6 +9,7 @@ namespace SchemaBuilder.Infrastruction.Repositories.WebsiteGroupSchemas
         Task Delete(WebsiteGroupSchemaFilter filter);
         Task EditRange(IEnumerable<WebsiteGroupSchema> c);
         Task<List<WebsiteGroupSchema>> Get(WebsiteGroupSchemaFilter filter);
+        IQueryable<WebsiteGroupSchema> getQuery(WebsiteGroupSchemaFilter filter);
         Task<int> GetCount(WebsiteGroupSchemaFilter filter);
     }
 }

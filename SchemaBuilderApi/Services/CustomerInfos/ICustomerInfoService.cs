@@ -9,6 +9,7 @@ namespace SchemaBuilder.Api.Services.CustomerInfos
         Task Delete(Guid c);
         Task DeleteCustomerInfo(CustomerInfo c);
         Task Edit(CustomerInfo c);
+        Task GenerateCustomerJson(Guid customerId);
         Task<List<CustomerInfo>> Get(CustomerInfoFilter filter);
         Task<int> GetCount(CustomerInfoFilter filter);
         Task<List<CustomerInfo>> GetDto(CustomerInfoFilter filter);

@@ -804,10 +804,10 @@ function InternalSearchSlickyTable(xDatatable) {
             $('#tSpinner').hide();
             if (data != null) {
 
-                if (data.items.length > 0) {
-                    $('#tBodyContent').html(xDatatable.showBody(data.items));
+                if (data.length > 0) {
+                    $('#tBodyContent').html(xDatatable.showBody(data));
 
-                    $('#tPaging').html(displayPaging(xDatatable, data.totalCount));
+                    $('#tPaging').html(displayPaging(xDatatable, data.length));
                 }
                 else {
                     $('#tEmpty').show();

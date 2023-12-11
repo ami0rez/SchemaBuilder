@@ -12,6 +12,20 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
             //SeedData();
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Specify relationships and foreign keys here
+            modelBuilder.Entity<SchemaProperty>()
+                .HasOne(sp => sp.schema)
+                .WithMany(s => s.properties)
+                .HasForeignKey(sp => sp.schemaId);
+
+            modelBuilder.Entity<SchemaProperty>()
+                .HasOne(sp => sp.schemaDataType)
+                .WithMany()
+                .HasForeignKey(sp => sp.schemaDataTypeId);
+        }
+
         #region Schema
         public DbSet<Schema> Schemas { get; set; }
         public DbSet<Category> Categories { get; set; }

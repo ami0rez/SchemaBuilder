@@ -10,6 +10,7 @@ using SchemaBuilder.Infrastruction.Data.Contexts;
 using SchemaBuilder.Infrastruction.Repositories;
 using SchemaBuilder.Infrastruction.Repositories.Categories;
 using SchemaBuilder.Infrastruction.Repositories.CustomerInfos;
+using SchemaBuilder.Infrastruction.Repositories.CustomerJsons;
 using SchemaBuilder.Infrastruction.Repositories.WebsiteGroupSchemas;
 using SchemaBuilder.Infrastruction.Repositories.WebsiteSections;
 
@@ -57,6 +58,7 @@ builder.Services.AddScoped<ISchemaPropertyRepository, SchemaPropertyRepository>(
 
 builder.Services.AddScoped<ICustomerInfoService, CustomerInfoService>();
 builder.Services.AddScoped<ICustomerInfoRepository, CustomerInfoRepository>();
+builder.Services.AddScoped<ICustomerJsonRepository, CustomerJsonRepository>();
 
 builder.Services.AddCors(options =>
 {

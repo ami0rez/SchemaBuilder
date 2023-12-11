@@ -16,7 +16,7 @@ namespace SchemaBuilder.Infrastruction.Repositories.WebsiteGroupSchemas
 
 
 
-        private IQueryable<WebsiteGroupSchema> getQuery(WebsiteGroupSchemaFilter filter)
+        public IQueryable<WebsiteGroupSchema> getQuery(WebsiteGroupSchemaFilter filter)
         {
             var listofGroupNames = filter.groupNameList?.Split(',');
             var query = _context.WebsiteGroupSchemas.Where(e => (

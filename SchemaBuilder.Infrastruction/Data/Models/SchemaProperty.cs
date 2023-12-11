@@ -18,7 +18,10 @@ namespace SchemaBuilder.Infrastruction.Data.Models
         public virtual Schema? schema { get; set; }
 
         public Datatype datatype { get; set; }
+
+        [ForeignKey("schemaDataType")]
         public int? schemaDataTypeId { get; set; }
+        public virtual Schema? schemaDataType { get; set; }
 
         public bool visible { get; set; } = true;
     }

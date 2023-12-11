@@ -30,7 +30,7 @@
                             <div class="d-flex-center-h-start">
                                 <div class="d-flex-grow">
                                 </div>
-                                <button class="ml-3 ant-btn btn-cta btn-primary btn-spinner" onclick="saveGroupSchemas('${groupId}')">Get Info</button>
+                                <button class="ml-3 ant-btn btn-cta btn-primary btn-spinner" onclick="requestInfo();" id="requestInoBtn">Get Info</button>
                             </div>
                         </div>
                     </div>
@@ -145,17 +145,41 @@
 
 
                     </div>
+
+
+                    <div class="box box-default users_read" id="customerDataContainer">
+                        <div class="box-header style-standard">
+                            Customer Data
+                        </div>
+                        <div class="box-body style-default-bright form">
+                            <a href="CustomerData">View Customer Data</a>
+                        </div>
+
+
+
+                    </div>
                 </div>
-                <div class="col-md-3" id="submitContainer">
+                <div class="col-md-3">
                     <div class="box box-default users_read">
                         <div class="box-body style-default-bright form">
+                            <div class="row g-pb-20" id="submitContainer" style="display: none;">
+                                <div class="col-md-12">
+                                    <button type="button" class="ant-btn btn-cta btn-primary btn-spinner clients_write btn-block" onclick="validateInfo();" id="validateInfoBtn">Validate Informations</button>
+                                </div>
+                            </div>
+                            <div class="row g-pb-10">
+                                <div class="col-md-8">
+                                    <div class="products_execute link-normal">
+                                        Status
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row g-pb-20">
                                 <div class="col-md-12">
-                                    <button type="button" class="ant-btn btn-cta btn-primary btn-spinner clients_write btn-block" onclick="save();" id="mySubmit">Validate Informations</button>
+                                    <span id="requestStatus"></span>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -175,6 +199,7 @@
 
         var customerInfo = {};
         var customerInfoId;
+        var requestDataResult;
 
         var AddressFields = [
             { title: 'Name', type: 'text', name: 'name' },
@@ -221,7 +246,7 @@
             }
             else {
                 customerInfo.id = e7();
-                customerInfo.status = customerProcessingStatus.processed;
+                //customerInfo.status = customerProcessingStatus.processed;
             }
             refreshContent()
             populateSubTable('customerInfo.peopleDetected', 'Address', "AddressFields");
@@ -229,33 +254,114 @@
             populateSubTable('customerInfo.associatedBusinessDetected', 'Business', "BusinessFields");
             populateSubTable('customerInfo.socialMedia', 'SocialMedia', "SocialMediaFields");
             populateSubTable('customerInfo.pages', 'Page', "PageFields");
-
-            //loadStandardValues(customerInfo, properties);
         }
 
         function refreshContent() {
-            if (customerInfoId) {
-                return;
+            if (customerInfo.status == null || customerInfo.status == undefined) {
+                $('#customerInfoContainer').hide();
+                $('#submitContainer').hide();
+            }else{
+                $('#customerInfoContainer').show();
+                $('#website').val(customerInfo.website);
+                $('#website').attr('disabled', true);
+                $('#requestInoBtn').hide();
             }
-            $('#customerInfoContainer').show();
 
             if (customerInfo.status == customerProcessingStatus.notProcessed) {
                 $('#notProceesed').show();
                 $('#customerInfo').hide();
                 $('#submitContainer').hide();
                 $('#notProceesedMessage').text('Your request is being processed this make take sometime, you will receive an email once it is ready')
+
+                $('#validateInfoBtn').hide();
+                $('#customerDataContainer').hide();
             }
-            else {
+            else if (customerInfo.status == customerProcessingStatus.processed || customerInfo.status == customerProcessingStatus.emailed) {
                 $('#notProceesed').hide();
                 $('#customerInfo').show();
                 $('#submitContainer').show();
                 $('#notProceesedMessage').text('Your request is still waiting in the quee')
+                $('#validateInfoBtn').show();
+                $('#customerDataContainer').hide();
             }
+            else if (customerInfo.status == customerProcessingStatus.validated) {
+                $('#notProceesed').hide();
+                $('#customerInfo').show();
+                $('#submitContainer').show();
+                $('#notProceesedMessage').text('Your request is still waiting in the quee')
+                $('#validateInfoBtn').hide();
+                $('#customerDataContainer').show();
+            }
+            showStatus();
         }
 
         function isValidURL(url) {
             var urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
             return urlPattern.test(url);
+        }
+        
+        function showStatus(){
+            var color = '';
+            switch (customerInfo.status) {
+                case 0: // Pending
+                    color = 'orange';
+                    break;
+                case 1: // Processed
+                    color = 'green';
+                    break;
+                case 2: // Emailed
+                    color = 'blue';
+                    break;
+                case 3: // Validated
+                    color = 'purple';
+                    break;
+                case 4: // Rejected
+                    color = 'red';
+                    break;
+                default:
+                    color = 'black';
+                    break;
+            }
+            $('#requestStatus').html(`<span style="background: ${color};padding: 2px 9px;border-radius: 12px;border: solid thin #33333322;color: white;">${processingStatusDesc[customerInfo.status]}</span>`);
+        }
+
+
+        function requestInfo() {
+            var url = $('#website').val();
+            if (!isValidURL(url)) {
+                toastr.error('The provided url is not valid');
+                unloadSpinnerEffect();
+                return;
+            }
+            customerInfo = {
+                id: e7(),
+                status: customerProcessingStatus.notProcessed,
+                website: url
+            }
+            genericSave(customerInfo, "CustomerInfo", [], requestInfoSuccess)
+        }
+
+        function requestInfoSuccess(url) {
+            toastr.success("Your request is added successfly in the quee, we will let you know once it is ready");
+            refreshContent();
+        }
+
+        function validateInfo() {
+            customerInfo.status = customerProcessingStatus.validated;
+            MODE = 'EDIT'
+            genericSave(customerInfo, "CustomerInfo", [], validateInfoSuccess)
+        }
+
+        async function validateInfoSuccess(url) {
+            toastr.success("Your request is validated successfly and added to the next quee, we will let you know once the data is ready");
+            refreshContent();
+            await generateCustomerDataRequest(url);
+        }
+
+        async function generateCustomerDataRequest(url) {
+            //GenerateCustomerJson
+            var customerDataPromis = getPromiseData("CustomerInfo/GenerateCustomerJson", "customerId=" + customerInfoId);
+            await loadPromise(customerDataPromis, "requestDataResult");
         }
 
     </script>

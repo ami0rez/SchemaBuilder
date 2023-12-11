@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchemaBuilder.Infrastruction.Data.Contexts;
 
@@ -11,9 +12,11 @@ using SchemaBuilder.Infrastruction.Data.Contexts;
 namespace SchemaBuilder.Infrastruction.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231129134221_addStatusToCustomerInfo")]
+    partial class addStatusToCustomerInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,8 +127,8 @@ namespace SchemaBuilder.Infrastruction.Migrations
                     b.Property<Guid>("customerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("status")
-                        .HasColumnType("int");
+                    b.Property<bool>("processed")
+                        .HasColumnType("bit");
 
                     b.HasKey("id");
 
@@ -300,8 +303,6 @@ namespace SchemaBuilder.Infrastruction.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("schemaDataTypeId");
-
                     b.HasIndex("schemaId");
 
                     b.ToTable("SchemaProperty");
@@ -405,17 +406,11 @@ namespace SchemaBuilder.Infrastruction.Migrations
 
             modelBuilder.Entity("SchemaBuilder.Infrastruction.Data.Models.SchemaProperty", b =>
                 {
-                    b.HasOne("SchemaBuilder.Infrastruction.Data.Models.Schema", "schemaDataType")
-                        .WithMany()
-                        .HasForeignKey("schemaDataTypeId");
-
                     b.HasOne("SchemaBuilder.Infrastruction.Data.Models.Schema", "schema")
                         .WithMany("properties")
                         .HasForeignKey("schemaId");
 
                     b.Navigation("schema");
-
-                    b.Navigation("schemaDataType");
                 });
 
             modelBuilder.Entity("SchemaBuilder.Infrastruction.Data.Models.WebsiteGroupSchema", b =>

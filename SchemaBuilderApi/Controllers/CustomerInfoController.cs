@@ -31,6 +31,14 @@ namespace CustomerInfoBuilderApi.Controllers
             return Ok();
         }
 
+
+        [HttpGet("GenerateCustomerJson")]
+        public async Task<ActionResult> GenerateCustomerJson([FromQuery] Guid customerId)
+        {
+            await _customerInfoService.GenerateCustomerJson(customerId).ConfigureAwait(false);
+            return Ok();
+        }
+
         [HttpPut]
         public async Task<ActionResult> Put([FromBody] CustomerInfo a)
         {

@@ -11,7 +11,6 @@ namespace SchemaBuilder.Infrastruction.Data.Models
         public int id { get; set; }
         public string? name { get; set; }
         public int? parentId { get; set; }
-        //public bool? master { get; set; }
         public virtual List<SchemaProperty>? properties { get; set; }
     }
 }

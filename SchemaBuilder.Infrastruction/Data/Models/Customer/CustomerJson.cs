@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using SlickyCommonLibrary.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchemaBuilder.Infrastruction.Data.Models.Customer
 {
@@ -9,6 +10,6 @@ namespace SchemaBuilder.Infrastruction.Data.Models.Customer
         public Guid customerId { get; set; }
         public CustomerInfo customer { get; set; }
         public string? JsonData { get; set; }
-        public bool processed { get; set; }
+        public CustomerProcessingStatus status { get; set; }
     }
 }
