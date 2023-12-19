@@ -17,15 +17,11 @@ namespace SchemaBuilder.Infrastruction.Repositories.CustomerJsons
 
         private async Task<IQueryable<CustomerJson>> getCustomerJsonQuery(CustomerJsonFilter filter)
         {
-            var flagList = new List<string>();
-
-            var subcategory = false;
-
-            var subs = new List<Guid>();
-
             return _context.CustomerJsons
                 .Where(e => (
-                    e.id == (filter.id.HasValue ? filter.id.Value : e.id)));
+                    e.id == (filter.id.HasValue ? filter.id.Value : e.id)
+                    && (e.customerId == (filter.customerId.HasValue ? filter.customerId.Value : e.customerId))
+                    )); ;
         }
 
 

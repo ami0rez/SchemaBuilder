@@ -10,6 +10,9 @@ namespace SchemaBuilder.Api.Utils.Generators
     public class CustomerDataGenerator
     {
 
+        static int limit = 100; // Set your desired depth limit
+        static int depth = 0;
+
         /// <summary>
         /// Generate Customer Json Data
         /// </summary>
@@ -18,9 +21,17 @@ namespace SchemaBuilder.Api.Utils.Generators
         /// <returns></returns>
         public static async Task<string> GenerateCustomerJson(CustomerInfo customer, List<WebsiteGroupSchema> websiteGroupSchema)
         {
-            var customerData = await GenerateCustomerData(customer, websiteGroupSchema);
-            var customerJson = JsonConvert.SerializeObject(customerData);
-            return customerJson;
+            try
+            {
+                var customerData = await GenerateCustomerData(customer, websiteGroupSchema);
+                var customerJson = JsonConvert.SerializeObject(customerData);
+                return customerJson;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
         }
 
         /// <summary>
@@ -50,7 +61,8 @@ namespace SchemaBuilder.Api.Utils.Generators
 
             foreach (var group in groupedWebGrpSchema)
             {
-                var page = await GneratePageWithFields(group);
+                var pageId = customer.pages.First(page => page.name == group.Key).id;
+                var page = await GneratePageWithFields(group, pageId);
                 customerData.pages.Add(page);
             }
 
@@ -62,24 +74,34 @@ namespace SchemaBuilder.Api.Utils.Generators
         /// </summary>
         /// <param name="group"></param>
         /// <returns></returns>
-        private static async Task<CustomerDataPage> GneratePageWithFields(IGrouping<string, WebsiteGroupSchema> group)
+        private static async Task<CustomerDataPage> GneratePageWithFields(IGrouping<string, WebsiteGroupSchema> group, Guid pageId)
         {
             var page = new CustomerDataPage
             {
+                id = pageId,
                 groupName = group.Key,
-                fields = new List<CustomerDataField>()
+                schemaFields = new List<CustomerDataSchema>()
             };
 
-            var webSiteGroupSchema = group.FirstOrDefault(webGrpSchema => webGrpSchema.schema != null && webGrpSchema.schema.properties.Any());
+            var webSiteGroupSchemaList = group.Where(webGrpSchema => webGrpSchema.visible && webGrpSchema.schema != null && webGrpSchema.schema.properties.Any());
 
-            if (webSiteGroupSchema != null)
+            foreach (var webSiteGroupSchema in webSiteGroupSchemaList)
             {
-                page.fields = await GnerateFields(webSiteGroupSchema.schema);
+                if (webSiteGroupSchema != null)
+                {
+                    var schemaFields = await GnerateFields(webSiteGroupSchema.schema);
+                    depth = 0;
+                    var schema = new CustomerDataSchema
+                    {
+                        id = webSiteGroupSchema.schemaId,
+                        name = webSiteGroupSchema.schema.name,
+                        fields = schemaFields
+                    };
+                    page.schemaFields.Add(schema);
+                }
             }
-
             return page;
         }
-
         /// <summary>
         /// Gnerate Fields from a schema
         /// </summary>
@@ -87,16 +109,23 @@ namespace SchemaBuilder.Api.Utils.Generators
         /// <returns></returns>
         private static async Task<List<CustomerDataField>> GnerateFields(Schema schema)
         {
+            depth++;
+
             var fields = new List<CustomerDataField>();
 
             foreach (var property in schema.properties)
             {
+                if (!property.visible)
+                {
+                    continue;
+                }
                 var field = new CustomerDataField();
                 field.id = property.id;
                 field.name = property.name;
+                field.friendlyName = property.friendlyName;
                 field.value = "";
 
-                if (property.datatype == Datatype.schema)
+                if (property.datatype == Datatype.schema && depth < limit)
                 {
                     field.schemaRefId = property.schemaDataTypeId.Value;
                     if (property.schemaDataType != null)

@@ -62,6 +62,16 @@ namespace SchemaBuilder.Api.Services.CustomerInfos
             await _customerJsonRepository.Add(customerJson);
         }
 
+        public async Task<List<CustomerJson>> getCustomerJson(Guid customerId)
+        {
+            var customerjsonfilter = new CustomerJsonFilter
+            {
+                customerId = customerId
+            };
+            var customerJson = await _customerJsonRepository.Get(customerjsonfilter);
+            return customerJson;
+        }
+
         private async Task<string> GetCustomerJson(Guid customerId)
         {
 
@@ -91,6 +101,7 @@ namespace SchemaBuilder.Api.Services.CustomerInfos
                 .Include(webGrpSchema => webGrpSchema.schema)
                     .ThenInclude(schema => schema.properties)
                         .ThenInclude(property => property.schemaDataType)
+                            .ThenInclude(schema => schema.properties)
                 .ToListAsync();
 
             var customerData = await CustomerDataGenerator.GenerateCustomerJson(customer, websiteGroupSchema);

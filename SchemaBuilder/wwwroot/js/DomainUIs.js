@@ -508,11 +508,11 @@ function refreshTable(objectsName, name, fieldname) {
         addButton = '';
     }
     let fullElementTemplate = `
-    <div class="box box-default users_read">
-         <div class="box-header style-standard">
-             ` + title + `s
-         </div>
-         <div class="box-body style-default-bright form">
+    <div class="mb-3 mt-2">
+         <h4 ${tablesDesfinition[name]?.hideTitle ? 'style="display:none"' : ''}>
+             ` + (tablesDesfinition[name]?.title ?? (title + "s")) + `
+         </h4>
+         <div>
              ${addButton}
              <table id="datatable_` + name + `" class="table table-striped table-hover" style="border:1px solid #e8e8e8 ;">
              </table>
@@ -581,6 +581,9 @@ function populateTableWithObjects(objects, name, fieldname, customEdit, customDe
             headerRow.append('<th></th>');
         }
         if (!tablesDesfinition[name]?.hideDelete) {
+            headerRow.append('<th></th>');
+        }
+        if (tablesDesfinition[name]?.showSelect) {
             headerRow.append('<th></th>');
         }
     }
@@ -664,12 +667,16 @@ function populateTableWithObjects(objects, name, fieldname, customEdit, customDe
             const confirmDeleteMethod = customDelete ?? 'confirmDeleteModal';
             var editButton = $(`<a class="btn btn-slick text-primary"  onClick="${editMehod}('` + id + `','` + name + `','` + fieldname + `');return false;"><i class="fas fa-pencil-alt"></i></a>`);
             var deleteButton = $(`<a class="btn btn-slick text-warning"  onClick="${confirmDeleteMethod}('` + id + `','` + name + `','` + fieldname + `');return false;"><i class="fa fa-trash"></i></a>`);
+            var selectButton = $(`<a class="btn btn-slick text-warning"  onClick="selectObjectModal('` + id + `','` + name + `','` + fieldname + `');return false;"><i class="fa fa-search"></i></a>`);
             // add the buttons to the row
             if (!tablesDesfinition[name]?.hideEdit) {
                 row.append($('<td></td>').append(editButton));
             }
             if (!tablesDesfinition[name]?.hideDelete) {
                 row.append($('<td></td>').append(deleteButton));
+            }
+            if (tablesDesfinition[name]?.showSelect) {
+                row.append($('<td></td>').append(selectButton));
             }
 
             actionfields.forEach(field => {
@@ -1497,6 +1504,13 @@ function editObjectModal(id, name, fieldname) {
     //}
 }
 
+function selectObjectModal(id, name, fieldname) {
+    if (tablesDesfinition[name].onSelect) {
+        tablesDesfinition[name].onSelect(id, name, fieldname);
+    } else {
+        editObjectModal(id, name, fieldname);
+    }
+}
 
 /* 
  * checks if value is valid for type phone number

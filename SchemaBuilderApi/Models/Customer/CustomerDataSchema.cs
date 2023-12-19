@@ -1,6 +1,6 @@
 ﻿namespace SchemaBuilder.Api.Models.Customer
 {
-    public class CustomerDataSchemaField
+    public class CustomerDataSchema
     {
         public int id { get; set; }
         public string name { get; set; }

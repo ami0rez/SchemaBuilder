@@ -9,6 +9,8 @@ namespace SchemaBuilder.Infrastruction.Data.Models.Customer
         public Guid id { get; set; }
         public Guid customerId { get; set; }
         public CustomerInfo customer { get; set; }
+
+        [Column(TypeName = "nvarchar(max)")]
         public string? JsonData { get; set; }
         public CustomerProcessingStatus status { get; set; }
     }

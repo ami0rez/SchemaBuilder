@@ -91,6 +91,34 @@ function loadSpinnerManually(THISOBJECT) {
 
 }
 
+function loadSpinnerAt(tagRef, after, min) {
+    if (tagRef != null) {
+        var spinnerId = `spinner_at_${tagRef}`;
+
+        // Check if a span with the same ID already exists
+        if (!$(`span[id='spinner_at_${tagRef}']`).length) {
+            var html = '';
+            if (min) {
+                html = `<span id="${spinnerId}">${miniSpinnersHTML}</span>`;
+            } else {
+                html = `<span id="${spinnerId}">${spinnerHTML}</span>`;
+            }
+            if (after) {
+                $(tagRef).append(html);
+            } else {
+                $(tagRef).prepend(html);
+            }
+        }
+    }
+}
+
+
+function unloadSpinnerAt(tagRef) {
+    if (tagRef != null) {
+        $(`span[id='spinner_at_${tagRef}']`).remove();
+    }
+}
+
 function unloadSpinnerEffect() {
 
     if (spinnerEvent) {
