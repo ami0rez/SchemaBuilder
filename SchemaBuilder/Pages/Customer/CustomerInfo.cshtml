@@ -159,7 +159,7 @@
 
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 requestStatusComp">
                     <div class="box box-default users_read">
                         <div class="box-body style-default-bright form">
                             <div class="row g-pb-20" id="submitContainer" style="display: none;">
@@ -266,11 +266,13 @@
             if (customerInfo.status == null || customerInfo.status == undefined) {
                 $('#customerInfoContainer').hide();
                 $('#submitContainer').hide();
+                $('.requestStatusComp').hide();
             } else {
                 $('#customerInfoContainer').show();
                 $('#website').val(customerInfo.website);
                 $('#website').attr('disabled', true);
                 $('#requestInoBtn').hide();
+                $('.requestStatusComp').show();
             }
 
             if (customerInfo.status == customerProcessingStatus.notProcessed) {

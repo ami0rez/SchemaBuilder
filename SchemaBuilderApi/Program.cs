@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SchemaBuilder.Api.Services;
+using SchemaBuilder.Api.Services.AzureQuee;
 using SchemaBuilder.Api.Services.Categories;
 using SchemaBuilder.Api.Services.CustomerInfos;
 using SchemaBuilder.Api.Services.SchemaPropertys;
@@ -59,6 +60,9 @@ builder.Services.AddScoped<ISchemaPropertyRepository, SchemaPropertyRepository>(
 builder.Services.AddScoped<ICustomerInfoService, CustomerInfoService>();
 builder.Services.AddScoped<ICustomerInfoRepository, CustomerInfoRepository>();
 builder.Services.AddScoped<ICustomerJsonRepository, CustomerJsonRepository>();
+
+builder.Services.AddScoped<IQueueService, QueueService>();
+
 
 builder.Services.AddCors(options =>
 {

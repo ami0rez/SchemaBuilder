@@ -7,6 +7,7 @@ namespace SchemaBuilder.Infrastruction.Data.Models.Customer
     {
         public Guid id { get; set; }
         public Guid customerId { get; set; }
+        public CustomerInfo? customer { get; set; }
         public string? name { get; set; }
         public string? position { get; set; }
         public string? address { get; set; }

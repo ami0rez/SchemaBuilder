@@ -11,7 +11,8 @@ namespace SchemaBuilder.Infrastruction.Data.Models.Customer
         public CustomerInfo customer { get; set; }
 
         [Column(TypeName = "nvarchar(max)")]
-        public string? JsonData { get; set; }
+        public string? jsonTemplate { get; set; }
+        public string? jsonData { get; set; }
         public CustomerProcessingStatus status { get; set; }
     }
 }

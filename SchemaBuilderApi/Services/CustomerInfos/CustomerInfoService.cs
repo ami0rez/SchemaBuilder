@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SchemaBuilder.Api.Models.Customer;
+using SchemaBuilder.Api.Services.AzureQuee;
 using SchemaBuilder.Api.Utils.Generators;
 using SchemaBuilder.Infrastruction.Data.Models;
 using SchemaBuilder.Infrastruction.Data.Models.Customer;
@@ -16,16 +18,19 @@ namespace SchemaBuilder.Api.Services.CustomerInfos
         private ICustomerInfoRepository _customerInfoRepository = null;
         private IWebsiteGroupSchemasRepository _websiteGroupSchemasRepository = null;
         private ICustomerJsonRepository _customerJsonRepository = null;
+        private IQueueService _queueService = null;
 
         public CustomerInfoService(
             ICustomerInfoRepository customerInfoRepository,
             IWebsiteGroupSchemasRepository websiteGroupSchemasRepository,
-            ICustomerJsonRepository customerJsonRepository
+            ICustomerJsonRepository customerJsonRepository,
+            IQueueService queueService
             )
         {
-            _customerInfoRepository = customerInfoRepository;
-            _websiteGroupSchemasRepository = websiteGroupSchemasRepository;
-            _customerJsonRepository = customerJsonRepository;
+            _customerInfoRepository = customerInfoRepository ?? throw new ArgumentNullException(nameof(customerInfoRepository));
+            _websiteGroupSchemasRepository = websiteGroupSchemasRepository ?? throw new ArgumentNullException(nameof(websiteGroupSchemasRepository));
+            _customerJsonRepository = customerJsonRepository ?? throw new ArgumentNullException(nameof(customerJsonRepository));
+            _queueService = queueService ?? throw new ArgumentNullException(nameof(queueService));
         }
 
         public async Task<List<CustomerInfo>> Get(CustomerInfoFilter filter)
@@ -45,7 +50,29 @@ namespace SchemaBuilder.Api.Services.CustomerInfos
         public async Task Add(CustomerInfo c)
         {
             await _customerInfoRepository.Add(c);
+            await SendQueueMessage(c);
 
+        }
+
+        /// <summary>
+        /// Sends a message to the queue based on customer information.
+        /// </summary>
+        /// <param name="customerInfo">The customer information to include in the queue message.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public async Task SendQueueMessage(CustomerInfo customerInfo)
+        {
+            // Create an anonymous object with selected customer information for the queue message
+            var queueMessageObject = new
+            {
+                customerId = customerInfo.id,
+                website = customerInfo.website
+            };
+
+            // Serialize the anonymous object to a JSON string
+            var queueMessageString = JsonConvert.SerializeObject(queueMessageObject);
+
+            // Enqueue the JSON string message to the queue
+            await _queueService.EnqueueMessageAsync(queueMessageString);
         }
 
         public async Task GenerateCustomerJson(Guid customerId)
@@ -55,7 +82,7 @@ namespace SchemaBuilder.Api.Services.CustomerInfos
             var customerJson = new CustomerJson
             {
                 customerId = customerId,
-                JsonData = jsonContent,
+                jsonTemplate = jsonContent,
                 status = CustomerProcessingStatus.notProcessed
             };
 
