@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchemaBuilder.Infrastruction.Data.Contexts;
 
@@ -11,9 +12,11 @@ using SchemaBuilder.Infrastruction.Data.Contexts;
 namespace SchemaBuilder.Infrastruction.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231224171159_UpdateData")]
+    partial class UpdateData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -149,9 +152,6 @@ namespace SchemaBuilder.Infrastruction.Migrations
                     b.Property<Guid>("customerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("groupName")
                         .HasColumnType("nvarchar(max)");
 
@@ -159,9 +159,6 @@ namespace SchemaBuilder.Infrastruction.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("url")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");

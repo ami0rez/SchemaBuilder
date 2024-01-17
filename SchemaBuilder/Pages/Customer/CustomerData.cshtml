@@ -2,7 +2,7 @@
 @using SlickyCommonLibrary.Enums;
 @model SchemaBuilder.Pages.Schema.Customer.CustomerDataModel
 @{
-    ViewBag.title = "title";
+    ViewBag.title = "customer";
 }
 <style>
     .info {
@@ -142,7 +142,7 @@
 
 
         function refreshPageTabs() {
-            if (customerJson) {
+            if (customerJson.pages) {
                 $("#schemasContainer").show();
                 $("#noCategoryContainer").hide();
                 addPagesTabs();

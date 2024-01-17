@@ -9,8 +9,10 @@ namespace SchemaBuilder.Infrastruction.Data.Models.Customer
         public Guid customerId { get; set; }
         public CustomerInfo? customer { get; set; }
         public string? name { get; set; }
+        public string? description { get; set; }
         public string? category { get; set; }
         public string? type { get; set; }
         public string? groupName { get; set; }
+       public string? url { get; set; }
     }
 }

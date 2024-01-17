@@ -10780,3 +10780,16 @@ js-products {
     background-color: #f8d7da;
     border-color: #f5c6cb;
 }
+
+.ui-autocomplete {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.fix-cell-height {
+    min-height: 100px; /* Adjust as necessary for your content */
+    overflow: hidden; /* Hide the overflow content */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-overflow: ellipsis; /* Add an ellipsis to text that overflows */
+}

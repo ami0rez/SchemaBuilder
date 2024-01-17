@@ -2,7 +2,7 @@
 @using SlickyCommonLibrary.Enums;
 @model SchemaBuilder.Pages.Schema.IntegrationModel
 @{
-    ViewBag.title = "title";
+    ViewBag.title = "integration";
 }
 
 <section class="container-fluid container-mw-xxl chapter">
@@ -53,82 +53,71 @@
 </section>
 
 @section scripts
-    {
+{
     <script src="~/js/libs/jquery-ui/jquery-ui.min.js"></script>
     <script src="~/lib/json-viwer/jquery.json-viewer.js"></script>
 
 }
 
 @section DemoScripts
-    {
+{
     <script>
 
+        // Define constant schema types
         var SCHEMATYPES = [
+            // Iterate over enum values and create an array
         @foreach (var type in Enum.GetValues(typeof(Datatype)))
         {
             @: '@Enum.GetName(typeof(Datatype), type)',
         }
-                                                    ];
+                    ];
 
+        // Declare global variables
         var categories = [];
         var sections = [];
         var websiteGroupSchema = [];
-        var categoryGroup = [];
         var schemas = [];
-        var masterSchemas = [];
-        var Properties = [];
-        var depth = 0;
-        var fieldsNames = [];
         var WebGrpSchemaList = {};
+        var fieldsNames = [];
         var mySavedCookie = [];
+        var catgegorySchemas = [];
 
-
+        // Initialize autocomplete and load data
         (async () => {
-            intializeAutocomplete();
+            initializeAutocomplete();
         })();
 
+        // Function to load category data based on category ID
         async function loadCategoryData(categoryId) {
-            var myWebsiteSectionPromise = getPromiseData("WebsiteSection", "categoryId=" + categoryId);
-            await loadPromise(myWebsiteSectionPromise, "sections");
-
-            var groupNames = sections.map(section => section.groupName);
-            var distinctGroupNames = groupNames.filter(function (item, index) {
-                return groupNames.indexOf(item) === index;
-            }).join(',');
-
-            var myWebsiteGroupSchemaPromise = getPromiseData("WebsiteGroupSchema", "groupNameList=" + distinctGroupNames);
-            await loadPromise(myWebsiteGroupSchemaPromise, "websiteGroupSchema");
-
-            var wgShemaIds = websiteGroupSchema.map(wgShema => wgShema.schemaId);
-            var distinctShemaIds = wgShemaIds.filter(function (item, index) {
-                return wgShemaIds.indexOf(item) === index;
-            }).join(',');
-
-            var mySchemaPromise = getPromiseData("Schema", "showLevel1Properties=true&idList=" + wgShemaIds);
-            await loadPromise(mySchemaPromise, "schemas");
-            schemas.sort((a, b) => (a > b) ? 1 : -1);
-
+            var myGetCatgegorySchemasPromise = getPromiseData("WebsiteSection/GetCatgegorySchemas", "categoryId=" + categoryId);
+            await loadPromise(myGetCatgegorySchemasPromise, "catgegorySchemas");
         }
 
+        // Show a loading spinner during autocomplete search
         function showAutocompleteSpinner() {
             $('#loader').css('width', '5rem');
-            loadSpinnerAt("#loader")
+            loadSpinnerAt("#loader");
         }
 
+        // Hide the loading spinner after autocomplete search
         function hideAutocompleteSpinner() {
             $('#loader').css('width', 'fit-content');
-            unloadSpinnerAt("#loader")
+            unloadSpinnerAt("#loader");
         }
-        function intializeAutocomplete() {
+
+        // Initialize autocomplete for category input
+        function initializeAutocomplete() {
             $("#categoryId").autocomplete({
                 source: async function (request, response) {
                     showAutocompleteSpinner();
                     var myPromise = getPromiseData("Category", "name=" + request.term);
                     await loadPromise(myPromise, "categories");
+
                     if (!categories || !categories.length) {
-                        toastr.error(`No Category found with name containing '${request.term}'`)
+                        toastr.error(`No Category found with name containing '${request.term}'`);
                         return;
                     }
+
                     hideAutocompleteSpinner();
                     var categoriesData = categories.map((categ) => ({
                         label: categ.name,
@@ -139,12 +128,13 @@
                 select: async function (event, ui) {
                     event.preventDefault();
                     $("#categoryId").val(ui.item.label);
-                    await loadCategoryData(ui.item.value)
-                    refreshSelectedWebGrpSchema(ui.item.value)
+                    await loadCategoryData(ui.item.value);
+                    refreshSelectedWebGrpSchema(ui.item.value);
                 },
             });
         }
 
+        // Refresh selected web group schema based on category
         function refreshSelectedWebGrpSchema(categoryId) {
             if (categoryId) {
                 clearHtmlTabs();
@@ -156,38 +146,42 @@
                 return;
             }
 
-            if (sections.length > 0) {
-                schemas.forEach(el => {
+            if (catgegorySchemas.length > 0) {
+                catgegorySchemas.forEach(el => {
                     displayWebsiteGroupSchemaFields(el);
                 });
-                openTab(schemas[0].id)
+                openTab(catgegorySchemas[0].id);
             }
         }
 
+        // Open a specific tab by its ID
         function openTab(tabId) {
             var firstTabHeaderId = '#tab' + tabId + '-tab';
             var firstTabBodyId = '#tab' + tabId;
-            $(firstTabHeaderId).addClass('active show')
-            $(firstTabBodyId).addClass('active show')
+            $(firstTabHeaderId).addClass('active show');
+            $(firstTabBodyId).addClass('active show');
         }
+
+        // Display website group schema fields
         function displayWebsiteGroupSchemaFields(schema) {
             var schemaValid = verifyWebGrpSchema(schema);
             if (schemaValid) {
-                addWebGrpSchemaTab(schema)
+                addWebGrpSchemaTab(schema);
             }
         }
 
+        // Verify website group schema
         function verifyWebGrpSchema(schema) {
             friendlyName = schema.friendlyName ?? schema.name;
-            if (schema.properties == null) {
-                console.log("--> It looks like we have a problem with this model name:" + friendlyName + ", model id: " + model.id);
+            if (schema.fields == null) {
+                console.log("--> It looks like we have a problem with this model name:" + friendlyName + ", model id: " + schema.id);
                 return false;
             }
             return true;
         }
 
+        // Add website group schema tab
         function addWebGrpSchemaTab(schema) {
-
             var friendlyName = "";
             var schemaId = schema.id;
 
@@ -195,40 +189,71 @@
 
             friendlyName = schema.friendlyName ?? schema.name;
             var content = getWebGrpSchemaProperties(schema);
-            addNewHtmlTab(schemaId, friendlyName, content)
+            addNewHtmlTab(schemaId, friendlyName, content);
         }
-
         function getWebGrpSchemaProperties(schema) {
+            var propertiesHtml = generateHtmlForFields(schema.fields, schema.id, '');
 
-            var properties = [];
-            var schemaId = schema.id;
-
-            properties = schema.properties;
-
-            var propertiesHtml = '';
-            properties.forEach(element => {
-                if (element.visible)
-                    if (element.datatype != 4) {
-                        fieldsNames.push(schemaId + '_' + element.name + '_1');
-                        propertiesHtml += `
-                                                    <div class="${schemaId} col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="${schemaId}_${element.name}">${element.friendlyName ?? element.name}</label>
-                                                            <input type="text" class="form-control" id="${schemaId}_${element.name}">
-                                                        </div>
-                                                    </div>
-                                                    `;
-                    }
-            });
             propertiesHtml += `
-                                                <button class="ml-3 ant-btn btn-cta btn-primary btn-spinner" onClick="showSchemasWithData('${schemaId}')">Show Schema with data</button>
-                                    `;
-            return propertiesHtml;
+                        <button class="ml-3 ant-btn btn-cta btn-primary btn-spinner" onClick="showSchemasWithData('${schema.id}')">Show Schema with data</button>`;
 
+            return propertiesHtml;
         }
 
+        function generateHtmlForFields(fields, schemaId, schemaPath) {
+            var propertiesHtml = '';
+
+            fields.forEach(field => {
+                if (!field.schemaRef) {
+                    var fieldName = schemaPath + schemaId + '_' + field.name + '_1';
+                    propertiesHtml += `
+                                <div class="${schemaPath}${schemaId} col-md-12">
+                                    <div class="form-group">
+                                        <label for="${fieldName}">${field.friendlyName ?? field.name}</label>
+                                        <input type="text" class="form-control" id="${fieldName}">
+                                    </div>
+                                </div>`;
+                } else if (field.schemaRef.fields && field.schemaRef.fields.length) {
+                    WebGrpSchemaList[field.schemaRef.id] = field.schemaRef;
+                    var nestedSchemaId = field.schemaRef.id;
+                    var nestedFields = field.schemaRef.fields;
+
+                    var newSchemaPath = schemaPath + (field.name + schemaId + '_');
+                    // Recursively generate HTML for nested fields
+                    var nestedHtml = generateHtmlForFields(nestedFields, nestedSchemaId, newSchemaPath);
+
+                    // Add a collapsible div for nested fields with improved UI design
+                    propertiesHtml += `
+                                <div class="col-md-12 mb-3">
+                                    <div class="card">
+                                            <div class="card-header d-flex-row" onclick="toggleCollapseIcon($(this))" style="cursor: pointer;" data-toggle="collapse" data-target="#${newSchemaPath}${nestedSchemaId}_collapsible" aria-expanded="false" aria-controls="${newSchemaPath}${nestedSchemaId}_collapsible">
+                                                <i 
+                                                    class="fa fa-chevron-right d-flex-center"
+                                                            style="display:flex;border:  solid thin #aaa;border-radius: 20px;margin-right: 5px;margin-top: 2px;width: 22px;height: 22px;"
+                                                    ></i>
+                                                <h5 class="d-flex-grow d-flex-center-h-start" style="margin-bottom: 0;">${field.friendlyName ?? field.name}</h5>
+                                            <span class="float-right">${field.schemaRef.name}</span>
+                                        </div>
+                                        <div class="collapse" id="${newSchemaPath}${nestedSchemaId}_collapsible">
+                                            <div class="card card-body" style="border: none;">
+                                                ${nestedHtml}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+                }
+            });
+
+            return propertiesHtml;
+        }
+        function toggleCollapseIcon(event) {
+            var icon = event.find('i.fa');
+            icon.toggleClass('fa-chevron-right fa-chevron-up');
+        }
+
+
+        // Add a new HTML tab
         function addNewHtmlTab(tabIndex, name, content) {
-            // Create new tab link and content
             var newTabLink = $('<a>', {
                 'class': 'nav-link',
                 'id': 'tab' + tabIndex + '-tab',
@@ -240,47 +265,42 @@
                 'class': 'tab-pane fade',
                 'id': 'tab' + tabIndex
             }).html(
-                `
-                            <h5>Schema Properties</h5>
+                `<h5>Schema Properties</h5>
                             <div id="SchemaProperties_${tabIndex}" class="row">
                                 ${content}
                             </div>
                             <br/>
                             <br/>
-                            <div id="schemaDisplay_${tabIndex}" class="row" style=" padding: 0 10px;display:none;">
+                            <div id="schemaDisplay_${tabIndex}" class="row" style="padding: 0 10px;display:none;">
                                 <h5>Result JSON-LD</h5>
-                                <div class="col-md-12" style=" border: solid thin #333; border-radius: 5px; margin: 0; background-color: #fff; position: relative;">
+                                <div class="col-md-12" style="border: solid thin #333; border-radius: 5px; margin: 0; background-color: #fff; position: relative;">
                                     <pre id="jsonviewer_${tabIndex}" class="col-md-12"></pre>
-                                    <span style=" position: absolute; top: 10px; right: 10px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; width: 30px; height: 30px; font-size: 1.3em; display: flex; justify-content: center; align-items: center; cursor: pointer; ">
-                                        <i class="fa fa-copy icon" data-icon="fa fa-copy" onclick="copySchemaJsonLD('${tabIndex}')"></i>
+                                    <span onclick="copySchemaJsonLD('${tabIndex}')" style="position: absolute; top: 10px; right: 10px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; width: 30px; height: 30px; font-size: 1.3em; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+                                        <i class="fa fa-copy icon" data-icon="fa fa-copy"></i>
                                     </span>
                                 </div>
-                            </div>
-                        `
+                            </div>`
             );
 
-            // Append new tab link and content
             $('#myTabs').append($('<li>', {
                 'class': 'nav-item'
             }).append(newTabLink));
 
             $('.tab-content').append(newTabContent);
-
-            // Activate the new tab
-            //newTabLink.tab('show');
         }
 
+        // Clear all HTML tabs
         function clearHtmlTabs() {
             $('#myTabs').empty();
             $('.tab-content').empty();
         }
 
+        // Copy schema JSON-LD to clipboard
         function copySchemaJsonLD(schemaId) {
-            var mySchemData = WebGrpSchemaList[schemaId];
-            var schemaObject = generateJSONObject(mySchemData, {});
+            var schemaObject = generateJSONObject(schemaId, {});
 
             var jsonString = JSON.stringify(schemaObject, null, 2);
-            jsonString = `<script type="application/ld+json">\n${jsonString}\n<\/script>`
+            jsonString = `<script type="application/ld+json">\n${jsonString}\n<\/script>`;
 
             // Create a temporary textarea to copy the text to the clipboard
             var textarea = document.createElement('textarea');
@@ -301,17 +321,18 @@
 
             // Remove the textarea from the DOM
             document.body.removeChild(textarea);
+            toastr.success('Json Schema copied successfully')
         }
 
+        // Show schema with data
         function showSchemasWithData(schemaId) {
-
-            var mySchemData = WebGrpSchemaList[schemaId];
-            var fullschemas = generateJSONObject(mySchemData, {});
+            var fullschemas = generateJSONObject(schemaId);
 
             $(`#schemaDisplay_${schemaId}`).show();
             renderJson(schemaId, fullschemas);
         }
 
+        // Render JSON to a specified element
         function renderJson(schemaId, input) {
             var options = {
                 collapsed: false,
@@ -324,46 +345,68 @@
             $(`#jsonviewer_${schemaId}`).jsonViewer(input, options);
         }
 
-        function generateJSONObject(schema) {
+        // Generate JSON object from schema and user input
+        function generateJSONObject(schemaId) {
+            var mySchemaData = WebGrpSchemaList[schemaId];
+            var data = getDataFromHtml(schemaId, '');
             let result = {
-
-                "@@type": schema.name
+                "@@type": mySchemaData.name,
+                ...data
             };
-            var properties = schema.properties;
-            properties.forEach(property => {
-                // Map data types from enum to string
-                const dataTypeMapping = {
-                    0: 'text',
-                    1: 'boolean',
-                    2: 'number',
-                    3: 'date',
-                    4: 'schema',
-                    5: 'time',
-                    6: 'datetime'
-                };
-
-                // Get the data type for the property
-                const dataType = dataTypeMapping[property.datatype];
-
-                // Convert the property value to the appropriate data type
-                let value = $(`#${schema.id}_${property.name}`).val() ?? '';
-                switch (dataType) {
-                    case 'boolean':
-                        value = Boolean(value) ?? '';
-                        break;
-                    case 'number':
-                        value = Number(value) ?? '';
-                        break;
-                    default:
-                        value = value ?? '';
-                }
-
-                // Add the property to the result JSON
-                result[property.name] = value;
-            });
             return result;
         }
 
+        function getDataFromHtml(schemaId, schemaPath) {
+            var mySchemaData = WebGrpSchemaList[schemaId];
+            var data = {};
+
+            // Iterate over schema fields and get data depending on field type
+            if (mySchemaData && mySchemaData.fields) {
+                mySchemaData.fields.forEach(field => {
+                    var fieldName = field.name;
+                    var fieldId = `${schemaPath}${schemaId}_${fieldName}_1`;
+                    var fieldValue = $(`#${fieldId}`).val();
+
+                    // Handle different field types
+                    switch (field.datatype) {
+                        case 2: // Numeric field
+                            data[fieldName] = parseFloat(fieldValue);
+                            break;
+                        case 3: // Date field
+                            // Add date parsing logic if needed
+                            data[fieldName] = fieldValue;
+                            break;
+                        default:
+                            // Default to string
+                            data[fieldName] = fieldValue;
+                            break;
+                    }
+
+                    // If the field has a schemaRef, get data recursively
+                    if (field.schemaRef) {
+                        var nestedSchemaId = field.schemaRef.id;
+                        var newSchemaPath = schemaPath + (field.name + schemaId + '_');
+                        var nestedData = getDataFromHtml(nestedSchemaId, newSchemaPath);
+
+                        // Check if all nested schema reference fields are empty
+                        var isNestedEmpty = Object.values(nestedData).every(value => value === null || value === '');
+
+                        // Only include nested data if it's not empty
+                        if (!isNestedEmpty) {
+                            data[fieldName] = nestedData;
+                        } else {
+                            data[fieldName] = null;
+                        }
+                    }
+                });
+            }
+
+            return data;
+        }
+
+
+
+        // Save user input in cookies
         function saveClientSchemas() {
             mySavedCookie = [];
             fieldsNames.forEach(x => {
@@ -373,10 +416,10 @@
                     mySavedCookie.push(myCookie);
                 }
             });
-
-            showSchemasWithData()
+            showSchemasWithData();
         }
 
+        // Function to add spaces for indentation
         function spaces(count) {
             var line = "&nbsp; ";
             for (var i = 0; i < count; i++) {
@@ -386,9 +429,10 @@
         }
 
     </script>
+
 }
 
 @section css
-    {
+{
     <link type="text/css" rel="stylesheet" href="~/lib/json-viwer/jquery.json-viewer.css" />
 }

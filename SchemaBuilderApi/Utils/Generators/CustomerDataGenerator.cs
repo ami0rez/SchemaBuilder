@@ -2,8 +2,11 @@
 using SchemaBuilder.Api.Models.Customer;
 using SchemaBuilder.Infrastruction.Data.Models;
 using SchemaBuilder.Infrastruction.Data.Models.Customer;
+using SlickyCommonLibrary.DomainUI;
 using SlickyCommonLibrary.Enums;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Dynamic;
 
 namespace SchemaBuilder.Api.Utils.Generators
 {
@@ -12,6 +15,7 @@ namespace SchemaBuilder.Api.Utils.Generators
 
         static int limit = 100; // Set your desired depth limit
         static int depth = 0;
+        static int jsonDepth = 0;
 
         /// <summary>
         /// Generate Customer Json Data
@@ -55,15 +59,19 @@ namespace SchemaBuilder.Api.Utils.Generators
                 return customerData;
             }
 
-            var groupNames = string.Join(',', customer.pages.Select(page => page.name).ToList());
-
             var groupedWebGrpSchema = websiteGroupSchema.GroupBy(webGrpSchema => webGrpSchema.groupName).ToList();
 
-            foreach (var group in groupedWebGrpSchema)
+            //foreach (var group in groupedWebGrpSchema)
+            //{
+            //    var pageId = customer.pages.First(page => page.groupName == group.Key).id;
+            //    var page = await GneratePageWithFields(group, pageId);
+            //    customerData.pages.Add(page);
+            //}
+            foreach (var page in customer.pages)
             {
-                var pageId = customer.pages.First(page => page.name == group.Key).id;
-                var page = await GneratePageWithFields(group, pageId);
-                customerData.pages.Add(page);
+                var group = groupedWebGrpSchema.First(groupSchema => groupSchema.Key == page.groupName);
+                var pageSchema = await GneratePageWithFields(group, page);
+                customerData.pages.Add(pageSchema);
             }
 
             return customerData;
@@ -74,11 +82,13 @@ namespace SchemaBuilder.Api.Utils.Generators
         /// </summary>
         /// <param name="group"></param>
         /// <returns></returns>
-        private static async Task<CustomerDataPage> GneratePageWithFields(IGrouping<string, WebsiteGroupSchema> group, Guid pageId)
+        private static async Task<CustomerDataPage> GneratePageWithFields(IGrouping<string, WebsiteGroupSchema> group, CustomerPage page)
         {
-            var page = new CustomerDataPage
+            var pageSchema = new CustomerDataPage
             {
-                id = pageId,
+                id = page.id,
+                name = page.name,
+                url = page.url,
                 groupName = group.Key,
                 schemaFields = new List<CustomerDataSchema>()
             };
@@ -89,29 +99,62 @@ namespace SchemaBuilder.Api.Utils.Generators
             {
                 if (webSiteGroupSchema != null)
                 {
-                    var schemaFields = await GnerateFields(webSiteGroupSchema.schema);
+                    var (fields, objects) = await GnerateFields(webSiteGroupSchema.schema);
+
                     depth = 0;
                     var schema = new CustomerDataSchema
                     {
                         id = webSiteGroupSchema.schemaId,
                         name = webSiteGroupSchema.schema.name,
-                        fields = schemaFields
+                        fields = fields,
+                        valueTemplate = objects
                     };
-                    page.schemaFields.Add(schema);
+                    pageSchema.schemaFields.Add(schema);
                 }
             }
-            return page;
+            return pageSchema;
         }
+
+        /// <summary>
+        /// Generate Catgegory Schemas
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <param name="websiteGroupSchema"></param>
+        /// <returns></returns>
+        public static async Task<List<CustomerDataSchema>> GetCatgegorySchemas(List<WebsiteGroupSchema> websiteGroupSchemaList)
+        {
+            List<CustomerDataSchema> schemaFieldList = new List<CustomerDataSchema>();
+
+            foreach (var websiteGroupSchema in websiteGroupSchemaList)
+            {
+                if (websiteGroupSchema != null && websiteGroupSchema.visible && !schemaFieldList.Any(schema => schema.id == websiteGroupSchema.schemaId))
+                {
+                    var (fields, objects) = await GnerateFields(websiteGroupSchema.schema);
+                    depth = 0;
+                    var schema = new CustomerDataSchema
+                    {
+                        id = websiteGroupSchema.schemaId,
+                        name = websiteGroupSchema.schema.name,
+                        fields = fields
+                    };
+                    schemaFieldList.Add(schema);
+                }
+            }
+
+            return schemaFieldList;
+        }
+
         /// <summary>
         /// Gnerate Fields from a schema
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
-        private static async Task<List<CustomerDataField>> GnerateFields(Schema schema)
+        private static async Task<(List<CustomerDataField>, dynamic)> GnerateFields(Schema schema)
         {
             depth++;
 
             var fields = new List<CustomerDataField>();
+            dynamic dynamicObject = new ExpandoObject();
 
             foreach (var property in schema.properties)
             {
@@ -123,24 +166,32 @@ namespace SchemaBuilder.Api.Utils.Generators
                 field.id = property.id;
                 field.name = property.name;
                 field.friendlyName = property.friendlyName;
-                field.value = "";
+                field.datatype = property.datatype;
 
                 if (property.datatype == Datatype.schema && depth < limit)
                 {
                     field.schemaRefId = property.schemaDataTypeId.Value;
                     if (property.schemaDataType != null)
                     {
+                        var (nestedFields, nestedObject) = await GnerateFields(property.schemaDataType);
                         field.schemaRef = new CustomerDataSchemaField
                         {
                             id = property.schemaDataType.id,
                             name = property.schemaDataType.name,
-                            fields = await GnerateFields(property.schemaDataType)
+                            datatype = property.datatype,
+                            fields = nestedFields
                         };
+                        ((IDictionary<string, object>)dynamicObject)[field.name] = nestedObject;
                     }
+                }
+                else
+                {
+                    string dataType = field.datatype.ToString();
+                    ((IDictionary<string, object>)dynamicObject)[field.name] = dataType;
                 }
                 fields.Add(field);
             }
-            return fields;
+            return (fields, dynamicObject);
         }
     }
 }

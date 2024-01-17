@@ -48,11 +48,13 @@ namespace SchemaBuilder.Infrastruction.Repositories.Categories
             if (filter != null)
             {
                 var categories = await (await getCategoryQuery(filter)).ToListAsync();
-
-                foreach (var item in categories)
+                if (filter.getParentNames.HasValue && filter.getParentNames.Value)
                 {
-                    item.fullName = GetCategoryParents(item.id);
-                    item.fullParentsIds = GetCategoryParentIds(item.id);
+                    foreach (var item in categories)
+                    {
+                        item.fullName = GetCategoryParents(item.id);
+                        item.fullParentsIds = GetCategoryParentIds(item.id);
+                    }
                 }
                 return categories;
             }

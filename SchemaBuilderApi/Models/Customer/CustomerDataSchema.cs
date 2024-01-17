@@ -6,5 +6,6 @@
         public string name { get; set; }
         public List<CustomerDataField> fields { get; set; }
         public List<Object> values { get; set; }
+        public dynamic valueTemplate { get; set; }
     }
 }

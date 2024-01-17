@@ -25,6 +25,10 @@ namespace SchemaBuilder.Infrastruction.Repositories.CustomerInfos
 
             return _context.Customers
                 .Include(customer => customer.pages)
+                .Include(customer => customer.peopleDetected)
+                .Include(customer => customer.serviceDetected)
+                .Include(customer => customer.associatedBusinessDetected)
+                .Include(customer => customer.socialMedia)
                 .Where(e => (
                     e.id == (filter.id.HasValue ? filter.id.Value : e.id)));
         }

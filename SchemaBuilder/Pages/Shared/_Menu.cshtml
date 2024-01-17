@@ -91,25 +91,28 @@
     <div class="app-sidenav d-md-flex ant-layout-sider" id="app-sidenav" style="flex: 0 0 240px; max-width: 0; min-width: 0; width: 0;">
         <div class="ant-layout-sider-children" style="background: #FEFEFE">
             <section class="sidenav-header" style="padding: 0; padding-left: 15px;">
-                <a href="../home/dashboard" class="d-none d-md-inline">
-                    <img src="~/img/logo/Small_Slicky_blocks_Logo.png" style="max-height:40px;margin-top:10px;" class="smallLogo">
-                    <span class="largeLogo">Schema Builder</span>
-                    
+                <a href="/" class="d-none d-md-inline ">
+                    <img src="~/img/logo.svg" style="max-height:40px;" class="smallLogo">
+                    <div style="margin-top: 5px;">
+                        <span 
+                            class="largeLogo display-2" 
+                            style="margin-bottom: 0;font-size: 1.3rem;">
+                            Schema Builder</span></div>
                 </a>
             </section>
             <div class="sidenav-content hide-scrollbar" style="margin-bottom: 40px;">
 
-                <ul class="ant-menu ant-menu-root ant-menu-inline mb-5" role="menu" id="access2" style="background: #FEFEFE;">
+                <ul class="ant-menu ant-menu-root ant-menu-inline mb-5" role="menu" style="background: #FEFEFE;">
                     <li class=" ant-menu-item-divider" style="margin-bottom:20px;"></li>
-                    <li class="ant-menu-item ant-menu-submenu-active-element" role="menuitem" style="padding-left: 24px;" id="dashboard">
+                    <li class="ant-menu-item" role="menuitem" style="padding-left: 24px;" id="builder">
 
                         <a href="~/Schema/Builder" class="d-flex w-100 justify-content-start align-items-center">
                             <i style=" width: 45px; height: 45px; font-size: 22.5px; display: flex; align-items: center; justify-content: center; margin-right: 8px; " class="fas fa-wrench"></i>
-                            <span class="menu-collapsed" id="homeMenuSpan">Builder</span>
+                            <span class="menu-collapsed" id="builderMenuSpan">Builder</span>
                         </a>
 
                     </li>
-                    <li class="ant-menu-item ant-menu-submenu-active-element" role="menuitem" style="padding-left: 24px;" id="dashboard">
+                    <li class="ant-menu-item" role="menuitem" style="padding-left: 24px;" id="groupBuilder">
 
                         <a href="~/Schema/GroupBuilder" class="d-flex w-100 justify-content-start align-items-center">
                             <i style=" width: 45px; height: 45px; font-size: 22.5px; display: flex; align-items: center; justify-content: center; margin-right: 8px; " class="fas fa-th-large"></i>
@@ -117,7 +120,7 @@
                         </a>
 
                     </li>
-                    <li class="ant-menu-item ant-menu-submenu-active-element" role="menuitem" style="padding-left: 24px;" id="dashboard">
+                    <li class="ant-menu-item" role="menuitem" style="padding-left: 24px;" id="integration">
 
                         <a href="~/Schema/Integration" class="d-flex w-100 justify-content-start align-items-center">
                             <i style=" width: 45px; height: 45px; font-size: 22.5px; display: flex; align-items: center; justify-content: center; margin-right: 8px; "class="fas fa-plug"></i>
@@ -125,7 +128,7 @@
                         </a>
 
                     </li>
-                    <li class="ant-menu-item ant-menu-submenu-active-element" role="menuitem" style="padding-left: 24px;" id="access_customer">
+                    <li class="ant-menu-item" role="menuitem" style="padding-left: 24px;" id="customer">
 
                         <a href="~/Customer/" class="d-flex w-100 justify-content-start align-items-center">
                             <i style=" width: 45px; height: 45px; font-size: 22.5px; display: flex; align-items: center; justify-content: center; margin-right: 8px; " class="fas fa-user-friends"></i>

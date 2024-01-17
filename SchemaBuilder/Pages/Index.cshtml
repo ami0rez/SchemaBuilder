@@ -1,10 +1,180 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .card {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Initial shadow */
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+        .card:hover {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+    .card-body .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        width: 160px;
+    }
+
+    body {
+        background-color: #F6F7C4;
+    }
+
+    .container {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-top: 50px;
+    }
+
+    .text-center {
+        color: #000; /* Black header text */
+    }
+
+    .lead {
+        color: #666;
+    }
+
+    .content-section {
+        border-bottom: 1px solid #7BD3EA;
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+    }
+
+    h2, h3, h4 {
+        color: #333;
+    }
+
+    .card-title {
+        color: #0C356A;
+    }
+
+    .card-body {
+        color: #333; /* Black card text */
+    }
+
+    .card-body .card-text {
+        min-height: 72px;
+    }
+    .btn-primary {
+        background-color: #7BD3EA !important;
+        border-color: #7BD3EA !important;
+    }
+
+        .btn-primary:hover {
+            background-color: #655B9E !important;
+            border-color: #655B9E !important;
+        }
+
+
+    .icon {
+        color: #7BD3EA;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+    }
+
+    .icon-builder {
+        color: #164B60; /* Builder icon color */
+    }
+
+    .icon-group-builder {
+        color: #1B6B93; /* Group Builder icon color */
+    }
+
+    .icon-integration {
+        color: #4FC0D0; /* Integration icon color */
+    }
+
+    .icon-customer {
+        color: #A2C579; /* Customer Management icon color */
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="display-4">Welcome to the Schema Builder Platform</h2>
+        <p class="lead">Empower your data management with our advanced Schema Builder tool.</p>
+    </div>
+
+    <div class="content-section my-5">
+        <h3>What Makes Schema Builder Exceptional?</h3>
+        <p class="lead">Our platform offers a robust and intuitive solution for managing schemas and data, providing you with unparalleled control over your information architecture. From defining complex data structures to seamlessly integrating with external systems, Schema Builder is designed to meet your diverse needs.</p>
+    </div>
+
+    <div class="content-section my-5">
+        <h3>Get Started Today</h3>
+        <p class="lead">Ready to take control of your data? Explore the powerful features of Schema Builder and revolutionize the way you manage, organize, and integrate your information.</p>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-3" onclick="location.href='/Schema/Builder';">
+                    <div class="card-body d-flex">
+                        <div class="icon">
+                            <i class="fas fa-wrench fa-3x icon-builder"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-title">Effortless Schema Creation</h4>
+                            <p class="card-text">Easily build and customize intricate data schemas tailored to your business requirements.</p>
+                            <a href="/Schema/Builder" class="btn btn-primary">Explore Builder</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-3" onclick="location.href='/Schema/GroupBuilder';">
+                    <div class="card-body d-flex">
+                        <div class="icon">
+                            <i class="fas fa-th-large fa-3x icon-group-builder"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-title">Group Builder</h4>
+                            <p class="card-text">Streamline your workflow by efficiently organizing and managing data groups with our Group Builder tool.</p>
+                            <a href="/Schema/GroupBuilder" class="btn btn-primary">Explore Group Builder</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more cards as needed -->
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-3" onclick="location.href='/Schema/Integration';">
+                    <div class="card-body d-flex">
+                        <div class="icon">
+                            <i class="fas fa-plug fa-3x icon-integration"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-title">Integration Capabilities</h4>
+                            <p class="card-text">Seamlessly integrate your schemas with external applications, ensuring a connected and interoperable data ecosystem.</p>
+                            <a href="/Schema/Integration" class="btn btn-primary">Explore Integration</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-3" onclick="location.href='/Customer/';">
+                    <div class="card-body d-flex">
+                        <div class="icon ">
+                            <i class="fas fa-user-friends fa-3x icon-customer"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-title">Customer Management</h4>
+                            <p class="card-text">Simplify customer data handling and enhance your customer relationship management with our dedicated Customer module.</p>
+                            <a href="/Customer/" class="btn btn-primary btn-explore-more">Explore Customers</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more cards as needed -->
+        </div>
+    </div>
 </div>

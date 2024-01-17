@@ -64,6 +64,8 @@ function loadMenu(title, subtitle) {
             $('li.ant-menu-item').removeClass('ant-menu-inline-collapsed');
             $('li.ant-menu-item span').show();
             $('.sidenav-header').css({ "padding": "0 0 0 19px;" });
+            $('.smallLogo').hide();
+            $('.largeLogo').show();
         } else {
             $('#menu-unfold').addClass('d-none d-md-inline-block');
             $('#ant-main-menu .ant-menu-inline').addClass('ant-menu-hidden');

@@ -4,8 +4,7 @@
 
 @model SchemaBuilder.Pages.Customer.CustomerInfoModel
 @{
-    ViewBag.subtitle = "access_customer";
-    ViewBag.title = "access";
+    ViewBag.title = "customer";
 }
 
 <section class="container-fluid container-mw-xxl chapter">
@@ -228,9 +227,9 @@
 
         var PageFields = [
             { title: 'Name', type: 'text', name: 'name' },
-            { title: 'Description', type: 'text', name: 'description' },
+            { title: 'Description', type: 'text', name: 'description', noTitle: true },
             { title: 'Category', type: 'text', name: 'category' },
-            { title: 'Type', type: 'text', name: 'type' },
+            { title: 'Type', type: 'text', name: 'type', noTitle: true },
         ];
 
         (async () => {
@@ -246,7 +245,6 @@
             }
             else {
                 customerInfo.id = e7();
-                //customerInfo.status = customerProcessingStatus.processed;
             }
             refreshContent()
             populateSubTable('customerInfo.peopleDetected', 'Address', "AddressFields");

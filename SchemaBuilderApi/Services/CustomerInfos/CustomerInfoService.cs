@@ -65,7 +65,7 @@ namespace SchemaBuilder.Api.Services.CustomerInfos
             var queueMessageObject = new
             {
                 customerId = customerInfo.id,
-                website = customerInfo.website
+                url = customerInfo.website
             };
 
             // Serialize the anonymous object to a JSON string
@@ -73,6 +73,26 @@ namespace SchemaBuilder.Api.Services.CustomerInfos
 
             // Enqueue the JSON string message to the queue
             await _queueService.EnqueueMessageAsync(queueMessageString);
+        }
+
+        /// <summary>
+        /// Sends a message to the queue based on customer information.
+        /// </summary>
+        /// <param name="customerInfo">The customer information to include in the queue message.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public async Task SendJsonDataQueueMessage(Guid customerId)
+        {
+            // Create an anonymous object with selected customer information for the queue message
+            var queueMessageObject = new
+            {
+                customerId,
+            };
+
+            // Serialize the anonymous object to a JSON string
+            var queueMessageString = JsonConvert.SerializeObject(queueMessageObject);
+
+            // Enqueue the JSON string message to the queue
+            await _queueService.EnqueueJsonDataMessageAsync(queueMessageString);
         }
 
         public async Task GenerateCustomerJson(Guid customerId)
@@ -87,6 +107,7 @@ namespace SchemaBuilder.Api.Services.CustomerInfos
             };
 
             await _customerJsonRepository.Add(customerJson);
+            await SendJsonDataQueueMessage(customerId);
         }
 
         public async Task<List<CustomerJson>> getCustomerJson(Guid customerId)
@@ -114,7 +135,7 @@ namespace SchemaBuilder.Api.Services.CustomerInfos
             var customer = customers[0];
 
 
-            var groupNames = string.Join(',', customer.pages.Select(page => page.name).ToList());
+            var groupNames = string.Join(',', customer.pages.Select(page => page.groupName).ToList());
 
             var websiteGroupSchemas = new WebsiteGroupSchemaFilter
             {

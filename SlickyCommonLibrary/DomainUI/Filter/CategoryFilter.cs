@@ -24,6 +24,7 @@
         public string? searchFlags { get; set; }
         public bool? showFilteredCategory { get; set; }
         public bool? showMinimumDetails { get; set; }
+        public bool? getParentNames { get; set; }
         public override string? filter
         {
             get
@@ -54,6 +55,9 @@
 
                 if (includeSubCategory.HasValue)
                     f += "&includeSubCategory=" + includeSubCategory.Value;
+
+                if (getParentNames.HasValue)
+                    f += "&getParentNames=" + getParentNames.Value;
                 return f;
 
             }
