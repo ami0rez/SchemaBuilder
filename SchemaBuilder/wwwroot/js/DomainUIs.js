@@ -307,27 +307,27 @@ async function getPromiseData(domainUIName, filter) {
 function resolveAJAXCALL(domainUIName, filter) {
 
     try {
-    var newPromise =  new Promise((resolve, reject) => {
-        
+        var newPromise = new Promise((resolve, reject) => {
+
             ajaxCall("GET", null, domainUIName + filter, null, null, data => {
                 resolve(data);
                 console.log(domainUIName + ' data resolved');
-                }
+            }
                 , err => {
                     reject(err);
                     console.log(domainUIName + ' getting error')
                 })
-    });
+        });
         return newPromise
     }
     catch {
         return null;
     }
 
-    
 
 
-  
+
+
 
 }
 
@@ -371,13 +371,13 @@ function genericSave(sourceObject, sourceName, requiredList, executeAfterRequest
     console.log('passed');
     saveSubTableData();
     executeAfterRequest = executeAfterRequest ?? goToMyHome;
+    var addMessage = executeAfterRequest ? undefined : sourceName + " Saved Successfully";
+    var editMessage = executeAfterRequest ? undefined : sourceName + " Updated Successfully";
     if (MODE == 'ADD')
-        ajaxCall("POST", sourceObject, sourceName, sourceName + " Saved Successfully", sourceName, executeAfterRequest);
+        ajaxCall("POST", sourceObject, sourceName, addMessage, sourceName, executeAfterRequest);
     else {
         var id = sourceObject.id;
-        //var sourceObject = { "item": sourceObject, "modifiedEntity": modifiedEntity };
-        console.log(sourceObject);
-        ajaxCall("PUT", sourceObject, sourceName + "?id=" + id, sourceName + " Updated Successfully", sourceName, executeAfterRequest);
+        ajaxCall("PUT", sourceObject, sourceName + "?id=" + id, editMessage, sourceName, executeAfterRequest);
     }
 }
 /**
@@ -574,7 +574,7 @@ function populateTableWithObjects(objects, name, fieldname, customEdit, customDe
         else if (field.type == 'percent') {
             suffix = ` (${percent})`;
         }
-        headerRow.append('<th class="col_'+ field.name +'">' + field.title + suffix + '</th>');
+        headerRow.append('<th class="col_' + field.name + '">' + field.title + suffix + '</th>');
     });
     if (type == defaultType) {
         if (!tablesDesfinition[name]?.hideEdit) {
@@ -588,7 +588,7 @@ function populateTableWithObjects(objects, name, fieldname, customEdit, customDe
         }
     }
     actionfields.forEach((field) => {
-        headerRow.append('<th class="col_' + field.actionName +'"></th>');
+        headerRow.append('<th class="col_' + field.actionName + '"></th>');
     });
 
     var thead = $('<thead class="ant-table-thead"></thead>').append(headerRow);
@@ -603,7 +603,7 @@ function populateTableWithObjects(objects, name, fieldname, customEdit, customDe
         var row = $('<tr id=row' + name + '_' + index + '></tr>');
         if (type == "select") {
             var selectButton = $(`<input type="checkbox" id="checkbox_row_${name}_${index}" onclick="AddSearchResultItem(${index}, '${name}', '${fieldname}');" >`);
-            row.append($('<td></td>').append(selectButton));
+            row.append($('<td class="fix-cell-width"></td>').append(selectButton));
         }
         // add the specified fields to the row
         fields.forEach(function (field) {
@@ -655,7 +655,7 @@ function populateTableWithObjects(objects, name, fieldname, customEdit, customDe
                     row.append('<td>' + toEnumFormat(object[field.name], field.switchToLabel, field.options) + '</td>');
                     break;
                 default:
-                    row.append('<td>' + toSimpleText(object[field.name]) + '</td>');
+                    row.append(`<td ${field.largText ? 'class="fix-cell-width"' : ''}>` + toSimpleText(object[field.name]) + '</td>');
                     break;
             }
         });
@@ -1475,7 +1475,18 @@ function editObjectModal(id, name, fieldname) {
                     value: addObject[field.name],
                     maxLength: field.maxLength,
                     minLength: field.minLength,
+                    disabled: field.disabled,
                 });
+
+                if (field.largText) {
+                    input = $('<textarea/>').attr({
+                        id: field.name,
+                        type: field.type,
+                        class: 'form-control',
+                        disabled: field.disabled,
+                    }).text(addObject[field.name]);
+                }
+
                 fieldDiv.append(label).append(input);
                 break;
                 break;

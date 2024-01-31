@@ -37,6 +37,7 @@ namespace SchemaBuilder.Infrastruction.Data.Contexts
         public DbSet<CustomerInfo> Customers { get; set; }
         public DbSet<CustomerSocialMedia> CustomerSocialMedias { get; set; }
         public DbSet<CustomerPerson> CustomerPeople { get; set; }
+        public DbSet<CustomerService> CustomerServices { get; set; }
         public DbSet<CustomerAssociatedBusiness> CustomerAssociatedBusinesses { get; set; }
         public DbSet<CustomerPage> CustomerPages { get; set; }
         public DbSet<CustomerJson> CustomerJsons { get; set; }

@@ -119,7 +119,7 @@
                 var customerJsonPromis = getPromiseData("CustomerInfo/GetCustomerJson", "customerId=" + customerInfoId);
                 await loadPromise(customerJsonPromis, "customerJson");
                 customerJson = customerJson[0];
-                customerData = JSON.parse(customerJson.jsonData)
+                customerData = JSON.parse(customerJson?.jsonData ?? "{}")
             }
             else {
                 customerInfo.id = e7();
@@ -142,7 +142,7 @@
 
 
         function refreshPageTabs() {
-            if (customerJson.pages) {
+            if (customerData.pages) {
                 $("#schemasContainer").show();
                 $("#noCategoryContainer").hide();
                 addPagesTabs();
@@ -159,8 +159,16 @@
         function addPagesTabs() {
             clearHtmlTabs();
             customerData.pages.forEach((page, index) => {
+                var pageName = page.groupName;
+                var selectedPage = customerInfo.pages.filter(paged => paged.id == page.id);
+                if (selectedPage && selectedPage.length) {
+                    pageName = selectedPage[0].name
+                }
+                pageName = toPascalCase(pageName);
+                if (tableFieldsContainer[pageName] && Object.keys(tableFieldsContainer[pageName]).length) {
+                    return;
+                }
 
-                var pageName = toPascalCase(page.groupName);
                 tableFieldsContainer[pageName] = {}
                 tableValuesContainer[pageName] = {}
                 var content = '';
@@ -187,9 +195,13 @@
                                 </div>
                                 `;
                     tableFieldsContainer[pageName][schemaName] = generateSchemaTableFields(schema)
-                    tableValuesContainer[pageName][schemaName] = schema.values?.map(row => ({ id: e7(), ...row })) ?? [];
+                    if (schema.values && schema.values.length == 1 && Array.isArray(schema.values[0])) {
+                        tableValuesContainer[pageName][schemaName] = schema.values[0]?.map(row => ({ id: e7(), ...row })) ?? [];
+                    } else {
+                        tableValuesContainer[pageName][schemaName] = schema.values?.map(row => ({ id: e7(), ...row })) ?? [];
+                    }
                 });
-                addNewHtmlTab(page.id, page.groupName, content);
+                addNewHtmlTab(page.id, pageName, content);
                 Object.keys(tableFieldsContainer[pageName]).forEach(table => {
                     populateSubTable(`tableValuesContainer.${pageName}.${table}`, `${pageName}${table}`, `tableFieldsContainer.${pageName}.${table}`, defaultType, null, {
                         title: toPlainText(table),

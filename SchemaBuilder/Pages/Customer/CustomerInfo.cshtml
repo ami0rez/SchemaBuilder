@@ -119,7 +119,7 @@
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="person" role="tabpanel">
-                                        <div id="placeholder_Address"></div>
+                                        <div id="placeholder_Person"></div>
                                     </div>
                                     <div class="tab-pane fade" id="services" role="tabpanel">
                                         <div id="placeholder_Service"></div>
@@ -164,6 +164,7 @@
                             <div class="row g-pb-20" id="submitContainer" style="display: none;">
                                 <div class="col-md-12">
                                     <button type="button" class="ant-btn btn-cta btn-primary btn-spinner clients_write btn-block" onclick="validateInfo();" id="validateInfoBtn">Validate Informations</button>
+                                    <button type="button" class="ant-btn btn-cta btn-primary btn-spinner clients_write btn-block" onclick="updateInfo();" id="validateInfoBtn">Update Informations</button>
                                 </div>
                             </div>
                             <div class="row g-pb-10">
@@ -187,20 +188,20 @@
 </section>
 
 @section scripts
-    {
+{
     <script src="~/js/libs/jquery-ui/jquery-ui.min.js"></script>
 
 }
 
 @section DemoScripts
-    {
+{
     <script>
 
         var customerInfo = {};
         var customerInfoId;
         var requestDataResult;
 
-        var AddressFields = [
+        var PeopleFields = [
             { title: 'Name', type: 'text', name: 'name' },
             { title: 'Position', type: 'text', name: 'position' },
             { title: 'Address', type: 'text', name: 'address' },
@@ -211,7 +212,7 @@
         var ServiceFields = [
             { title: 'Name', type: 'text', name: 'name' },
             { title: 'Price', type: 'text', name: 'price' },
-            { title: 'Description', type: 'text', name: 'description' },
+            { title: 'Description', type: 'text', name: 'description', largText: true },
         ];
 
         var BusinessFields = [
@@ -227,9 +228,10 @@
 
         var PageFields = [
             { title: 'Name', type: 'text', name: 'name' },
-            { title: 'Description', type: 'text', name: 'description', noTitle: true },
-            { title: 'Category', type: 'text', name: 'category' },
-            { title: 'Type', type: 'text', name: 'type', noTitle: true },
+            { title: 'Category', type: 'text', name: 'category', noTitle: true, disabled: true },
+            { title: 'Group name', type: 'text', name: 'groupName' },
+            { title: 'Url', type: 'text', name: 'url', noTitle: true },
+            { title: 'Description', type: 'text', name: 'description', largText: true },
         ];
 
         (async () => {
@@ -247,7 +249,7 @@
                 customerInfo.id = e7();
             }
             refreshContent()
-            populateSubTable('customerInfo.peopleDetected', 'Address', "AddressFields");
+            populateSubTable('customerInfo.peopleDetected', 'Person', "PeopleFields");
             populateSubTable('customerInfo.serviceDetected', 'Service', "ServiceFields");
             populateSubTable('customerInfo.associatedBusinessDetected', 'Business', "BusinessFields");
             populateSubTable('customerInfo.socialMedia', 'SocialMedia', "SocialMediaFields");
@@ -305,8 +307,8 @@
             var urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
             return urlPattern.test(url);
         }
-        
-        function showStatus(){
+
+        function showStatus() {
             var color = '';
             switch (customerInfo.status) {
                 case 0: // Pending
@@ -361,11 +363,13 @@
 
         function requestInfoSuccess(url) {
             toastr.success("Your request is added successfly in the quee, we will let you know once it is ready");
+            var newUrl = '?id=' + customerInfo.id;
+            window.history.pushState({ path: newUrl }, '', newUrl)
             refreshContent();
         }
 
         function validateInfo() {
-            //customerInfo.status = customerProcessingStatus.validated;
+            customerInfo.status = customerProcessingStatus.validated;
             MODE = 'EDIT'
             genericSave(customerInfo, "CustomerInfo", [], validateInfoSuccess)
         }
@@ -374,6 +378,15 @@
             toastr.success("Your request is validated successfly and added to the next quee, we will let you know once the data is ready");
             refreshContent();
             await generateCustomerDataRequest(url);
+        }
+
+        function updateInfo() {
+            MODE = 'EDIT'
+            genericSave(customerInfo, "CustomerInfo", [], updateInfoSuccess)
+        }
+
+        async function updateInfoSuccess(url) {
+            toastr.success("Your data has been updated successfully");
         }
 
         async function generateCustomerDataRequest(url) {
@@ -385,6 +398,6 @@
 }
 
 @section css
-    {
+{
     <link type="text/css" rel="stylesheet" href="~/lib/json-viwer/jquery.json-viewer.css" />
 }

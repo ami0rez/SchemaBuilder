@@ -10787,8 +10787,8 @@ js-products {
     overflow-x: hidden;
 }
 
-.fix-cell-height {
-    min-height: 100px; /* Adjust as necessary for your content */
+.fix-cell-width {
+    max-width: 150px; /* Adjust as necessary for your content */
     overflow: hidden; /* Hide the overflow content */
     white-space: nowrap; /* Prevent text from wrapping */
     text-overflow: ellipsis; /* Add an ellipsis to text that overflows */
