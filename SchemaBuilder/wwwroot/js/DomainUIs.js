@@ -508,7 +508,7 @@ function refreshTable(objectsName, name, fieldname) {
         addButton = '';
     }
     let fullElementTemplate = `
-    <div class="mb-3 mt-2">
+    <div class="mt-2">
          <h4 ${tablesDesfinition[name]?.hideTitle ? 'style="display:none"' : ''}>
              ` + (tablesDesfinition[name]?.title ?? (title + "s")) + `
          </h4>
@@ -667,7 +667,7 @@ function populateTableWithObjects(objects, name, fieldname, customEdit, customDe
             const confirmDeleteMethod = customDelete ?? 'confirmDeleteModal';
             var editButton = $(`<a class="btn btn-slick text-primary"  onClick="${editMehod}('` + id + `','` + name + `','` + fieldname + `');return false;"><i class="fas fa-pencil-alt"></i></a>`);
             var deleteButton = $(`<a class="btn btn-slick text-warning"  onClick="${confirmDeleteMethod}('` + id + `','` + name + `','` + fieldname + `');return false;"><i class="fa fa-trash"></i></a>`);
-            var selectButton = $(`<a class="btn btn-slick text-warning"  onClick="selectObjectModal('` + id + `','` + name + `','` + fieldname + `');return false;"><i class="fa fa-search"></i></a>`);
+            var selectButton = $(`<a class="btn btn-slick text-warning"  onClick="selectObjectModal('` + id + `','` + name + `',\`` + fieldname + `\`);return false;"><i class="fa fa-search"></i></a>`);
             // add the buttons to the row
             if (!tablesDesfinition[name]?.hideEdit) {
                 row.append($('<td></td>').append(editButton));

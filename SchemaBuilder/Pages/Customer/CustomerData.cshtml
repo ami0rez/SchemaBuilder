@@ -57,7 +57,7 @@
                     </div>
                     <div class="box box-default users_read">
                         <div class="box-header style-standard">
-                            Customer Data
+                            Customer Pages
                         </div>
                         <div class="box-body style-default-bright form">
                             <div class="container" id="schemasContainer" style="display:none;">
@@ -81,14 +81,14 @@
 </section>
 
 @section scripts
-    {
+{
     <script src="~/js/libs/jquery-ui/jquery-ui.min.js"></script>
     <script src="~/lib/json-viwer/jquery.json-viewer.js"></script>
 
 }
 
 @section DemoScripts
-    {
+{
     <script>
 
         var SCHEMATYPES = [
@@ -96,7 +96,7 @@
         {
             @: '@Enum.GetName(typeof(Datatype), type)',
         }
-                                                    ];
+                                                            ];
         var customerInfo = {};
         var customerJson = {};
         var customerInfoId;
@@ -160,56 +160,81 @@
             clearHtmlTabs();
             customerData.pages.forEach((page, index) => {
                 var pageName = page.groupName;
+                var pageDescription;
+                var pageUrl;
+                let pageId;
                 var selectedPage = customerInfo.pages.filter(paged => paged.id == page.id);
                 if (selectedPage && selectedPage.length) {
-                    pageName = selectedPage[0].name
+                    pageName = selectedPage[0].name;
+                    pageId = selectedPage[0].id;
+                    pageDescription = selectedPage[0].description;
+                    pageUrl = selectedPage[0].url;
                 }
-                pageName = toPascalCase(pageName);
-                if (tableFieldsContainer[pageName] && Object.keys(tableFieldsContainer[pageName]).length) {
+                if (tableFieldsContainer[pageId] && Object.keys(tableFieldsContainer[pageId]).length) {
                     return;
                 }
 
-                tableFieldsContainer[pageName] = {}
-                tableValuesContainer[pageName] = {}
+                tableFieldsContainer[pageId] = {}
+                tableValuesContainer[pageId] = {}
                 var content = '';
                 page.schemaFields.forEach(schema => {
                     var schemaName = toPascalCase(schema.name);
-                    content += `
-                                <div class"row">
-                                    <div id="details_${pageName}${schemaName}" class="content" style="display: none;">
-                                        <h4>${toPlainText(schema.name)}</h4>
-                                        <div id="schemaDisplay_${pageName}${schemaName}" class="row" style=" padding: 0 10px;">
-                                            <h5>Result JSON-LD</h5>
-                                            <div class="col-md-12" style=" border: solid thin #333; border-radius: 5px; margin: 0; background-color: #fff; position: relative;">
-                                                <pre id="jsonviewer_${pageName}${schemaName}" class="col-md-12"></pre>
-                                                <span style=" position: absolute; top: 10px; right: 10px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; width: 30px; height: 30px; font-size: 1.3em; display: flex; justify-content: center; align-items: center; cursor: pointer; ">
-                                                    <i id="copySchemaJsonLDBtn_${pageName}${schemaName}" class="fa fa-copy icon" data-icon="fa fa-copy"></i>
-                                                </span>
-                                                <span  onclick="toggleDetails('${pageName}${schemaName}')" style=" position: absolute; top: 10px; left: 6px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; width: 30px; height: 30px; font-size: 1.3em; display: flex; justify-content: center; align-items: center; cursor: pointer; ">
-                                                    <i class="fa fa-arrow-left" data-icon="fa-arrow-left"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="placeholder_${pageName}${schemaName}"></div>
-                                </div>
-                                `;
-                    tableFieldsContainer[pageName][schemaName] = generateSchemaTableFields(schema)
+                    var schemaValues = [];
+                    tableFieldsContainer[pageId][schemaName] = generateSchemaTableFields(schema)
                     if (schema.values && schema.values.length == 1 && Array.isArray(schema.values[0])) {
-                        tableValuesContainer[pageName][schemaName] = schema.values[0]?.map(row => ({ id: e7(), ...row })) ?? [];
+                        schemaValues = schema.values[0]?.map(row => ({ id: e7(), ...row })) ?? [];
                     } else {
-                        tableValuesContainer[pageName][schemaName] = schema.values?.map(row => ({ id: e7(), ...row })) ?? [];
+                        schemaValues = schema.values
+                            ?.filter(row => row && Object.keys(row).length > 0 && Object.keys(row).some(objKey => row[objKey]))
+                            .map(row => ({
+                                '@@type': schema.name,
+                                id: e7(),
+                                ...row 
+                            })) ?? [];
+                    }
+                    tableValuesContainer[pageId][schemaName] = schemaValues;
+                    content += `
+                                        <div class"row">
+                                            <div id="details_${pageId}${schemaName}" class="content" style="display: none;">
+                                                <h4>${toPlainText(schema.name)}</h4>
+                                                <div id="schemaDisplay_${pageId}${schemaName}" class="row" style=" padding: 0 10px;">
+                                                    <h5>Result JSON-LD</h5>
+                                                        <div class="col-md-12" style=" border: solid thin #333; border-radius: 5px; margin: 0; background-color: #fff; position: relative;">
+                                                        <pre id="jsonviewer_${pageId}${schemaName}" class="col-md-12"></pre>
+                                                        <span style=" position: absolute; top: 10px; right: 10px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; width: 30px; height: 30px; font-size: 1.3em; display: flex; justify-content: center; align-items: center; cursor: pointer; ">
+                                                            <i id="copySchemaJsonLDBtn_${pageId}${schemaName}" class="fa fa-copy icon" data-icon="fa fa-copy"></i>
+                                                        </span>
+                                                        <span  onclick="toggleDetails('${pageId}${schemaName}')" style=" position: absolute; top: 10px; left: 6px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; width: 30px; height: 30px; font-size: 1.3em; display: flex; justify-content: center; align-items: center; cursor: pointer; ">
+                                                            <i class="fa fa-arrow-left" data-icon="fa-arrow-left"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            DATA
+                                        </div>
+                                        `;
+                    if (schemaValues && schemaValues.length) {
+                        content = content.replace("DATA", `
+                            <div id="placeholder_${pageId}${schemaName}"></div>
+                        `)
+                    }else{
+                        content = content.replace("DATA", `
+                            <div id="placeholder_${pageId}${schemaName}"></div>
+                            <div class="d-flex justify-content-center align-items-center border-bottom border-left border-right py-2">
+                                <h5>Nothing to show</h5>
+                            </div>
+                        `)
                     }
                 });
-                addNewHtmlTab(page.id, pageName, content);
-                Object.keys(tableFieldsContainer[pageName]).forEach(table => {
-                    populateSubTable(`tableValuesContainer.${pageName}.${table}`, `${pageName}${table}`, `tableFieldsContainer.${pageName}.${table}`, defaultType, null, {
+                addNewHtmlTab(page.id, pageName, content, pageDescription, pageUrl);
+                Object.keys(tableFieldsContainer[pageId]).forEach(table => {
+                    populateSubTable(`tableValuesContainer['${pageId}'].${table}`, `${pageId}${table}`, `tableFieldsContainer['${pageId}'].${table}`, defaultType, null, {
                         title: toPlainText(table),
                         hideAdd: true,
                         hideEdit: true,
                         hideDelete: true,
                         showSelect: true,
-                        onSelect: (id, name, fieldname) => selectRow(id, name, pageName, table)
+                        onSelect: (id, name, fieldname) => selectRow(id, name, pageId, table)
                     });
                 });
             });
@@ -270,7 +295,7 @@
         }
 
 
-        function addNewHtmlTab(tabIndex, name, content) {
+        function addNewHtmlTab(tabIndex, name, content, description, url) {
             var newTabLink = $('<a>', {
                 'class': 'nav-link',
                 'id': 'tab' + tabIndex + '-tab',
@@ -282,11 +307,21 @@
                 'class': 'tab-pane fade',
                 'id': 'tab' + tabIndex
             }).html(
+                `   <div>
+                        <h4>Url</h4>
+                        <div><a href="${url}">${url}</a></div>
+                    </div>
+                    <div>
+                        <h4>Description</h4>
+                        <div>${description}</div>
+                    </div>
+                    <div class="mt-4">
+                        <div id="listContainer_${tabIndex}">
+                            ${content}
+                        </div>
+                    </div>
+                    
                 `
-                            <div id="listContainer_${tabIndex}">
-                                ${content}
-                            </div>
-                        `
             );
             $('#myTabs').append($('<li>', {
                 'class': 'nav-item'
@@ -368,12 +403,14 @@
 
             // Remove the textarea from the DOM
             document.body.removeChild(textarea);
+
+            toastr.success('Json Schema copied successfully')
         }
-                //#endregion
+        //#endregion
     </script>
 }
 
 @section css
-    {
+{
     <link type="text/css" rel="stylesheet" href="~/lib/json-viwer/jquery.json-viewer.css" />
 }
